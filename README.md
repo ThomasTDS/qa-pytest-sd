@@ -135,6 +135,18 @@ ruff format --check .  # só verifica, sem alterar (usado no CI)
 mypy .                 # verifica erros de tipos
 ```
 
+Para rodar essas checagens automaticamente antes de cada commit, instale o hook do **pre-commit** (já incluso no `requirements.txt`):
+
+```
+pre-commit install
+```
+
+A partir daí, todo `git commit` roda `ruff check --fix`, `ruff format` e `mypy` nos arquivos alterados. Para rodar manualmente contra o repositório inteiro:
+
+```
+pre-commit run --all-files
+```
+
 ---
 
 ### Estrutura de Testes e Padrões Aplicados
@@ -155,7 +167,6 @@ O projeto roda automaticamente via GitHub Actions (`.github/workflows/tests.yml`
 - **Dependabot** ativo (`.github/dependabot.yml`): atualizações automáticas semanais de dependências pip e das actions do workflow.
 
 A `main` é protegida: mudanças precisam passar por Pull Request com o check de testes verde.
-
 
 ---
 

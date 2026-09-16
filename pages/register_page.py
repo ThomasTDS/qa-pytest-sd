@@ -14,6 +14,9 @@ class AccountInfo:
     city: str
     zipcode: str
     mobile_number: str
+    birth_day: str = "10"
+    birth_month: str = "5"
+    birth_year: str = "1995"
     country: str | None = None
 
 
@@ -30,9 +33,9 @@ class RegisterPage:
     def fill_account_information(self, info: AccountInfo) -> None:
         self.page.locator("#id_gender1").check()
         self.page.locator('[data-qa="password"]').fill(info.password)
-        self.page.locator("#days").select_option("10")
-        self.page.locator("#months").select_option("5")
-        self.page.locator("#years").select_option("1995")
+        self.page.locator("#days").select_option(info.birth_day)
+        self.page.locator("#months").select_option(info.birth_month)
+        self.page.locator("#years").select_option(info.birth_year)
 
         self.page.locator('[data-qa="first_name"]').fill(info.first_name)
         self.page.locator('[data-qa="last_name"]').fill(info.last_name)
