@@ -156,10 +156,6 @@ O projeto roda automaticamente via GitHub Actions (`.github/workflows/tests.yml`
 
 A `main` é protegida: mudanças precisam passar por Pull Request com o check de testes verde.
 
-### Próximos Passos
-
-- Todos os cenários do [qa-playwright-sd](https://github.com/ThomasTDS/qa-playwright-sd) já foram portados (login, cadastro, logout, produtos/carrinho, checkout, contato/newsletter e segurança passiva).
-- Itens de manutenção em aberto: extrair a data de nascimento fixa do cadastro para `AccountInfo`, trocar a geração de e-mail único (`time.time()`) por `uuid4`, e configurar `pre-commit` local para rodar ruff/mypy antes do commit.
 
 ---
 
