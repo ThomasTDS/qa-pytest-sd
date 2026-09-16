@@ -3,15 +3,14 @@ import re
 
 from playwright.sync_api import Page, expect
 
-BASE_URL = os.getenv("BASE_URL", "https://automationexercise.com/")
-
 
 class LoginPage:
     def __init__(self, page: Page) -> None:
         self.page = page
 
     def goto(self) -> None:
-        self.page.goto(BASE_URL + "login")
+        base_url = os.getenv("BASE_URL", "https://automationexercise.com/")
+        self.page.goto(base_url + "login")
 
     def login(self, email: str, password: str) -> None:
         self.page.locator('[data-qa="login-email"]').fill(email)
