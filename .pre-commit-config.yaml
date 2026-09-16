@@ -1,0 +1,20 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.8
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v2.3.1
+    hooks:
+      - id: mypy
+        pass_filenames: false
+        args: ["."]
+        additional_dependencies:
+          - playwright==1.63.0
+          - pytest==9.1.1
+          - pytest-bdd==8.1.0
+          - pytest-html==4.2.0
+          - python-dotenv==1.2.3

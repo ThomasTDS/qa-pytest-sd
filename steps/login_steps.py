@@ -1,4 +1,4 @@
-import time
+import uuid
 
 from pytest_bdd import given, parsers, then, when
 
@@ -43,7 +43,7 @@ def assert_logged_out(login_page: LoginPage) -> None:
 
 @when("ele se cadastra com um e-mail novo")
 def signup_new_user(register_page: RegisterPage) -> None:
-    unique_email = f"qa-pytest-sd-{int(time.time() * 1000)}@mailinator.com"
+    unique_email = f"qa-pytest-sd-{uuid.uuid4().hex}@mailinator.com"
     register_page.start_signup("QA Pytest SD", unique_email)
     register_page.fill_account_information(
         AccountInfo(
