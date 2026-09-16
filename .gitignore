@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# Playwright artifacts
+test-results/
+videos/
+screenshots/
+traces/
+
+# Relatórios
+reports/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# VS Code
+.vscode/

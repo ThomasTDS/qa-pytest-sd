@@ -1,0 +1,28 @@
+[project]
+name = "qa-pytest-sd"
+version = "1.0.0"
+description = "Testes automatizados do automationexercise.com com Pytest + Playwright (versão Python do qa-playwright-sd)"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+bdd_features_base_dir = "features"
+markers = [
+    "TC-001: login com credenciais válidas",
+    "TC-002: login com credenciais inválidas",
+    "TC-003: cadastro de um novo usuário",
+    "TC-011: logout",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+disallow_untyped_defs = true
