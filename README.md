@@ -10,7 +10,7 @@ Este repositório contém testes automatizados do site **[automationexercise.com
 
 É a versão em **Python** do [qa-playwright-sd](https://github.com/ThomasTDS/qa-playwright-sd), que cobre os mesmos cenários e a mesma arquitetura (POM + Gherkin), originalmente escrito em TypeScript. A ideia não é um projeto novo do zero: os arquivos `.feature` (Gherkin) são praticamente idênticos entre os dois repositórios — o que muda é a linguagem e as ferramentas usadas para implementar os steps e os Page Objects.
 
-> **Status:** em construção, migrando cenário por cenário a partir do projeto em TypeScript. Cobertura atual: login, cadastro e logout.
+> **Status:** migração de cenários do projeto em TypeScript concluída. Cobertura atual: login, cadastro, logout, produtos/carrinho, checkout, contato/newsletter e verificações de segurança passivas.
 
 ---
 
@@ -95,6 +95,14 @@ $env:HEADLESS="true"; pytest
 HEADLESS=true pytest
 ```
 
+### Rodar só o smoke test
+
+O cenário `TC-007` (checkout completo) é marcado com `@smoke` e cobre login, produtos, carrinho e checkout em um único fluxo ponta-a-ponta:
+
+```
+pytest -m smoke
+```
+
 ### Rodar contra outra URL
 
 Por padrão os testes apontam para `https://automationexercise.com/`. Para rodar contra outro ambiente, defina `BASE_URL`:
@@ -150,7 +158,8 @@ A `main` é protegida: mudanças precisam passar por Pull Request com o check de
 
 ### Próximos Passos
 
-- Portar os demais cenários do [qa-playwright-sd](https://github.com/ThomasTDS/qa-playwright-sd): produtos/carrinho, checkout, contato/newsletter e segurança passiva.
+- Todos os cenários do [qa-playwright-sd](https://github.com/ThomasTDS/qa-playwright-sd) já foram portados (login, cadastro, logout, produtos/carrinho, checkout, contato/newsletter e segurança passiva).
+- Itens de manutenção em aberto: extrair a data de nascimento fixa do cadastro para `AccountInfo`, trocar a geração de e-mail único (`time.time()`) por `uuid4`, e configurar `pre-commit` local para rodar ruff/mypy antes do commit.
 
 ---
 

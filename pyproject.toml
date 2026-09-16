@@ -12,7 +12,19 @@ markers = [
     "TC-001: login com credenciais válidas",
     "TC-002: login com credenciais inválidas",
     "TC-003: cadastro de um novo usuário",
+    "TC-004: buscar produtos e visualizar resultados",
+    "TC-005: adicionar múltiplos produtos ao carrinho",
+    "TC-006: remover um produto do carrinho",
+    "TC-007: finalizar compra com sucesso",
+    "TC-008: tentar finalizar checkout sem estar logado",
+    "TC-009: enviar formulário de contato com sucesso",
+    "TC-010: inscrever e-mail na newsletter com sucesso",
     "TC-011: logout",
+    "TC-012: cabeçalhos de segurança HTTP presentes",
+    "TC-013: redirecionamento HTTP para HTTPS",
+    "TC-014: campo de senha deve estar mascarado",
+    "TC-015: cookie de sessão deve ter a flag HttpOnly ativada",
+    "smoke: cenário crítico de ponta a ponta",
 ]
 
 [tool.ruff]
