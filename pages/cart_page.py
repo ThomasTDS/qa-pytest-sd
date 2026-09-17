@@ -21,3 +21,6 @@ class CartPage:
         self.page.locator("tr").filter(has_text=product_name).locator(
             ".cart_quantity_delete"
         ).click()
+
+    def assert_empty(self, expected_message: str) -> None:
+        expect(self.page.get_by_text(expected_message)).to_be_visible()

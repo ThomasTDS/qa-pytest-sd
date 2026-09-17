@@ -34,3 +34,8 @@ def assert_order_placed(checkout_page: CheckoutPage) -> None:
 @then("ele deve ver a mensagem pedindo para fazer login")
 def assert_login_required_message(checkout_page: CheckoutPage) -> None:
     checkout_page.assert_login_required_message()
+
+
+@then("ele não deve ver a opção de prosseguir para o checkout")
+def assert_proceed_to_checkout_not_visible(checkout_page: CheckoutPage) -> None:
+    checkout_page.assert_proceed_to_checkout_not_visible()

@@ -55,3 +55,8 @@ def assert_product_not_in_cart(cart_page: CartPage, product_name: str) -> None:
 @then(parsers.parse('ele deve ver o produto "{product_name}" no carrinho'))
 def assert_product_in_cart(cart_page: CartPage, product_name: str) -> None:
     cart_page.assert_product_in_cart(product_name)
+
+
+@then(parsers.parse('ele deve ver a mensagem de carrinho vazio "{expected_message}"'))
+def assert_cart_empty(cart_page: CartPage, expected_message: str) -> None:
+    cart_page.assert_empty(expected_message)

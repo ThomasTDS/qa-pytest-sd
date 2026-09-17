@@ -19,3 +19,9 @@ Feature: Checkout no Automation Exercise
     And ele acessa o carrinho
     And ele prossegue para o checkout
     Then ele deve ver a mensagem pedindo para fazer login
+
+  @TC-017
+  Scenario: Carrinho vazio impede prosseguir para o checkout
+    When ele acessa o carrinho
+    Then ele deve ver a mensagem de carrinho vazio "Cart is empty! Click here to buy products."
+    And ele não deve ver a opção de prosseguir para o checkout
