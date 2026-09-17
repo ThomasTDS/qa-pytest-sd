@@ -103,6 +103,14 @@ O cenário `TC-007` (checkout completo) é marcado com `@smoke` e cobre login, p
 pytest -m smoke
 ```
 
+### Rodar só os testes unitários
+
+Além dos cenários E2E (BDD, contra o site real), `tests/unit/` cobre a lógica dos Page Objects — leitura de `BASE_URL`, montagem de seletores, condicionais como o campo `country` opcional — com o `Page` do Playwright mockado. Não abrem navegador, não dependem de rede e rodam em segundos:
+
+```
+pytest -m unit
+```
+
 ### Rodar contra outra URL
 
 Por padrão os testes apontam para `https://automationexercise.com/`. Para rodar contra outro ambiente, defina `BASE_URL`:
