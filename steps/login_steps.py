@@ -1,3 +1,4 @@
+import os
 import uuid
 
 from pytest_bdd import given, parsers, then, when
@@ -70,3 +71,16 @@ def assert_account_message(register_page: RegisterPage, expected_message: str) -
 def delete_created_account(register_page: RegisterPage) -> None:
     register_page.continue_after_account_created()
     register_page.delete_account()
+
+
+@when("ele tenta se cadastrar com o e-mail da conta de teste")
+def signup_with_test_user_email(register_page: RegisterPage) -> None:
+    email = os.getenv("TEST_USER_EMAIL")
+    if not email:
+        raise RuntimeError("TEST_USER_EMAIL precisa estar definido (veja .env.example)")
+    register_page.submit_signup("QA Pytest SD", email)
+
+
+@then(parsers.parse('ele deve ver a mensagem de erro de cadastro "{expected_message}"'))
+def assert_signup_error(register_page: RegisterPage, expected_message: str) -> None:
+    register_page.assert_signup_error(expected_message)

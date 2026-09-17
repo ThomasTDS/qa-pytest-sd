@@ -37,3 +37,6 @@ class CheckoutPage:
 
     def assert_order_placed(self) -> None:
         expect(self.page.get_by_text("Order Placed!")).to_be_visible()
+
+    def assert_proceed_to_checkout_not_visible(self) -> None:
+        expect(self.page.get_by_text("Proceed To Checkout")).to_have_count(0)

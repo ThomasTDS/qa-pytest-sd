@@ -24,11 +24,17 @@ class RegisterPage:
     def __init__(self, page: Page) -> None:
         self.page = page
 
-    def start_signup(self, name: str, email: str) -> None:
+    def submit_signup(self, name: str, email: str) -> None:
         self.page.locator('[data-qa="signup-name"]').fill(name)
         self.page.locator('[data-qa="signup-email"]').fill(email)
         self.page.locator('[data-qa="signup-button"]').click()
+
+    def start_signup(self, name: str, email: str) -> None:
+        self.submit_signup(name, email)
         expect(self.page.get_by_text("Enter Account Information")).to_be_visible()
+
+    def assert_signup_error(self, expected_message: str) -> None:
+        expect(self.page.get_by_text(expected_message)).to_be_visible()
 
     def fill_account_information(self, info: AccountInfo) -> None:
         self.page.locator("#id_gender1").check()

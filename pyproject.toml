@@ -24,6 +24,8 @@ markers = [
     "TC-013: redirecionamento HTTP para HTTPS",
     "TC-014: campo de senha deve estar mascarado",
     "TC-015: cookie de sessão deve ter a flag HttpOnly ativada",
+    "TC-016: tentar se cadastrar com um e-mail já existente",
+    "TC-017: carrinho vazio impede prosseguir para o checkout",
     "smoke: cenário crítico de ponta a ponta",
     "unit: testes unitários de page objects, sem navegador real",
 ]

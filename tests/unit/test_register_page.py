@@ -68,3 +68,13 @@ def test_fill_account_information_selects_country_when_set() -> None:
     RegisterPage(page).fill_account_information(info)
 
     locators['[data-qa="country"]'].select_option.assert_called_once_with("Canada")
+
+
+def test_submit_signup_fills_name_and_email_and_clicks() -> None:
+    page, locators = make_page_mock()
+
+    RegisterPage(page).submit_signup("QA Pytest SD", "user@test.com")
+
+    locators['[data-qa="signup-name"]'].fill.assert_called_once_with("QA Pytest SD")
+    locators['[data-qa="signup-email"]'].fill.assert_called_once_with("user@test.com")
+    locators['[data-qa="signup-button"]'].click.assert_called_once()
