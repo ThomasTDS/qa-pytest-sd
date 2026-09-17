@@ -195,6 +195,8 @@ pre-commit run --all-files
 
 O projeto roda automaticamente via GitHub Actions (`.github/workflows/tests.yml`) a cada push/PR para a `main` e diariamente às 06:00 UTC. Antes dos testes, o CI valida lint (`ruff check`), formatação (`ruff format --check`) e tipos (`mypy`), quebrando o build se algo estiver fora do padrão. A suíte roda três vezes — uma por navegador (Chromium, Firefox e WebKit) — cada uma em paralelo (`pytest -n auto`, via pytest-xdist), e o relatório HTML de cada navegador é publicado como artifact da execução. Cenários que falham são reexecutados automaticamente uma vez (`--reruns 1`), para absorver instabilidades pontuais de rede sem mascarar bugs reais de código.
 
+Dependências pip e os binários dos navegadores do Playwright são cacheados entre execuções (`actions/cache`, invalidado automaticamente quando `requirements.txt` muda), o que evita rebaixar ~200MB de navegadores a cada run.
+
 ### Segurança da pipeline
 
 - `pip-audit` roda no CI a cada execução, quebrando o build se houver vulnerabilidade conhecida em alguma dependência.

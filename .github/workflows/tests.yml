@@ -17,6 +17,7 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
+          cache: 'pip'
 
       - run: pip install -r requirements.txt
 
@@ -27,6 +28,12 @@ jobs:
       - run: ruff format --check .
 
       - run: mypy .
+
+      - name: Cache navegadores do Playwright
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-browsers-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
 
       - run: playwright install --with-deps chromium firefox webkit
 
