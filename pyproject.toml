@@ -25,6 +25,7 @@ markers = [
     "TC-014: campo de senha deve estar mascarado",
     "TC-015: cookie de sessão deve ter a flag HttpOnly ativada",
     "smoke: cenário crítico de ponta a ponta",
+    "unit: testes unitários de page objects, sem navegador real",
 ]
 
 [tool.ruff]
