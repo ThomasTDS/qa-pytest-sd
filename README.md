@@ -19,12 +19,14 @@ Este repositório contém testes automatizados do site **[automationexercise.com
 ```text
 qa-pytest-sd/
 ├── .github/
+│   ├── ISSUE_TEMPLATE/    # Template de bug report
 │   ├── workflows/         # Pipeline de CI (GitHub Actions)
 │   └── dependabot.yml     # Atualização automática de dependências
+├── docs/                  # Matriz de rastreabilidade de test cases
 ├── features/              # Cenários em Gherkin (.feature), compartilhados com o qa-playwright-sd
 ├── steps/                 # Implementação dos steps (pytest-bdd)
 ├── pages/                 # Page Objects (LoginPage, RegisterPage, ...)
-├── tests/                 # Arquivos que ligam cada feature aos seus steps
+├── tests/                 # Arquivos que ligam cada feature aos seus steps (E2E) e testes unitários (tests/unit/)
 ├── reports/               # Relatório HTML gerado a cada execução (não versionado)
 ├── conftest.py            # Fixtures do pytest (navegador, página, screenshot em falha)
 ├── pyproject.toml         # Configuração do pytest, ruff e mypy
@@ -175,6 +177,13 @@ O projeto roda automaticamente via GitHub Actions (`.github/workflows/tests.yml`
 - **Dependabot** ativo (`.github/dependabot.yml`): atualizações automáticas semanais de dependências pip e das actions do workflow.
 
 A `main` é protegida: mudanças precisam passar por Pull Request com o check de testes verde.
+
+---
+
+### Documentação de QA
+
+- Template de bug report em `.github/ISSUE_TEMPLATE/bug_report.md`, com severidade (impacto técnico) e prioridade (urgência de correção) tratadas como campos separados, e causa raiz preenchida só após investigação real.
+- Matriz de rastreabilidade em `docs/test-cases.md`, ligando cada test case ao cenário `.feature` correspondente via tag `@TC-XXX`.
 
 ---
 
