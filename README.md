@@ -97,6 +97,20 @@ $env:HEADLESS="true"; pytest
 HEADLESS=true pytest
 ```
 
+### Rodar em outro navegador
+
+Por padrão os testes rodam no **Chromium**. Para rodar em **Firefox** ou **WebKit**, defina `BROWSER` (garanta antes que o navegador está instalado — veja "Instalar navegadores do Playwright"):
+
+```
+# PowerShell
+$env:BROWSER="firefox"; pytest
+
+# bash
+BROWSER=firefox pytest
+```
+
+Valores aceitos: `chromium` (padrão), `firefox`, `webkit`.
+
 ### Rodar em paralelo
 
 Os cenários são independentes entre si (cada um abre seu próprio navegador), então rodam bem em paralelo via **pytest-xdist**. O CI já roda assim (`-n auto`, que usa todos os cores disponíveis no runner):
@@ -179,7 +193,7 @@ pre-commit run --all-files
 
 ### CI/CD
 
-O projeto roda automaticamente via GitHub Actions (`.github/workflows/tests.yml`) a cada push/PR para a `main` e diariamente às 06:00 UTC. Antes dos testes, o CI valida lint (`ruff check`), formatação (`ruff format --check`) e tipos (`mypy`), quebrando o build se algo estiver fora do padrão. Os testes rodam em paralelo (`pytest -n auto`, via pytest-xdist), e o relatório HTML combinado é publicado como artifact de cada execução. Cenários que falham são reexecutados automaticamente uma vez (`--reruns 1`), para absorver instabilidades pontuais de rede sem mascarar bugs reais de código.
+O projeto roda automaticamente via GitHub Actions (`.github/workflows/tests.yml`) a cada push/PR para a `main` e diariamente às 06:00 UTC. Antes dos testes, o CI valida lint (`ruff check`), formatação (`ruff format --check`) e tipos (`mypy`), quebrando o build se algo estiver fora do padrão. A suíte roda três vezes — uma por navegador (Chromium, Firefox e WebKit) — cada uma em paralelo (`pytest -n auto`, via pytest-xdist), e o relatório HTML de cada navegador é publicado como artifact da execução. Cenários que falham são reexecutados automaticamente uma vez (`--reruns 1`), para absorver instabilidades pontuais de rede sem mascarar bugs reais de código.
 
 ### Segurança da pipeline
 

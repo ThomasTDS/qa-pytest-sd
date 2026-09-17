@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 
 from pages.login_page import LoginPage
@@ -41,11 +43,14 @@ def test_login_with_test_user_raises_when_credentials_missing() -> None:
 
 
 def test_login_with_test_user_logs_in_with_env_credentials(monkeypatch: pytest.MonkeyPatch) -> None:
+    # assert_logged_in() usa expect() do Playwright, que nao funciona sobre um Page
+    # mockado (nao e um Locator/Page real) - stub para isolar so a logica de delegacao.
     monkeypatch.setenv("TEST_USER_EMAIL", "user@test.com")
     monkeypatch.setenv("TEST_USER_PASSWORD", "secret")
     page, locators = make_page_mock()
 
-    LoginPage(page).login_with_test_user()
+    with patch("pages.login_page.expect"):
+        LoginPage(page).login_with_test_user()
 
     locators['[data-qa="login-email"]'].fill.assert_called_once_with("user@test.com")
     locators['[data-qa="login-password"]'].fill.assert_called_once_with("secret")

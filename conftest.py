@@ -19,13 +19,18 @@ from pages.security_page import SecurityPage
 load_dotenv()
 
 PAGE_STASH_KEY = pytest.StashKey[Page]()
+SUPPORTED_BROWSERS = ("chromium", "firefox", "webkit")
 
 
 @pytest.fixture
 def page(request: pytest.FixtureRequest) -> Generator[Page, None, None]:
+    browser_name = os.getenv("BROWSER", "chromium")
+    if browser_name not in SUPPORTED_BROWSERS:
+        raise ValueError(f"BROWSER inválido: {browser_name!r}. Use um de {SUPPORTED_BROWSERS}.")
     headless = os.getenv("HEADLESS", "false").lower() == "true"
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=headless)
+        browser_type = getattr(playwright, browser_name)
+        browser = browser_type.launch(headless=headless)
         pg = browser.new_page()
         request.node.stash[PAGE_STASH_KEY] = pg
         yield pg

@@ -28,16 +28,34 @@ jobs:
 
       - run: mypy .
 
-      - run: playwright install --with-deps chromium
+      - run: playwright install --with-deps chromium firefox webkit
 
-      - run: pytest -n auto --html=reports/report.html --self-contained-html --reruns 1
+      - name: Testes (Chromium)
+        run: pytest -n auto --html=reports/report-chromium.html --self-contained-html --reruns 1
         env:
           HEADLESS: 'true'
+          BROWSER: chromium
+          TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+          TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+
+      - name: Testes (Firefox)
+        run: pytest -n auto --html=reports/report-firefox.html --self-contained-html --reruns 1
+        env:
+          HEADLESS: 'true'
+          BROWSER: firefox
+          TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+          TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+
+      - name: Testes (WebKit)
+        run: pytest -n auto --html=reports/report-webkit.html --self-contained-html --reruns 1
+        env:
+          HEADLESS: 'true'
+          BROWSER: webkit
           TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
           TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
       - uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: pytest-report
-          path: reports/report.html
+          name: pytest-reports
+          path: reports/report-*.html

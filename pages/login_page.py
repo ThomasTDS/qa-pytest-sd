@@ -25,6 +25,7 @@ class LoginPage:
                 "TEST_USER_EMAIL e TEST_USER_PASSWORD precisam estar definidos (veja .env.example)"
             )
         self.login(email, password)
+        self.assert_logged_in()
 
     def assert_logged_in(self) -> None:
         expect(self.page.locator('a:has-text("Logged in as")')).to_be_visible()
