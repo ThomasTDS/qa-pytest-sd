@@ -12,6 +12,8 @@ Este repositório contém testes automatizados do site **[automationexercise.com
 
 > **Status:** migração de cenários do projeto em TypeScript concluída. Cobertura atual: login, cadastro, logout, produtos/carrinho, checkout, contato/newsletter e verificações de segurança passivas.
 
+![Relatório de testes](docs/images/test-report.png)
+
 ---
 
 ## Estrutura do Projeto
