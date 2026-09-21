@@ -10,8 +10,6 @@ Este repositório contém testes automatizados do site **[automationexercise.com
 
 É a versão em **Python** do [qa-playwright-sd](https://github.com/ThomasTDS/qa-playwright-sd), que cobre os mesmos cenários e a mesma arquitetura (POM + Gherkin), originalmente escrito em TypeScript. A ideia não é um projeto novo do zero: os arquivos `.feature` (Gherkin) são praticamente idênticos entre os dois repositórios — o que muda é a linguagem e as ferramentas usadas para implementar os steps e os Page Objects.
 
-> **Status:** migração de cenários do projeto em TypeScript concluída. Cobertura atual: login, cadastro, logout, produtos/carrinho, checkout, contato/newsletter e verificações de segurança passivas.
-
 ![Relatório de testes](docs/images/test-report.png)
 
 ---
