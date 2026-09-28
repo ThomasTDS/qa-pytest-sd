@@ -201,6 +201,7 @@ pre-commit run --all-files
 - Testes End-to-End (E2E): simulação de fluxos reais de usuário.
 - Testes de API: validação direta do contrato da API pública do site (`features/api.feature`), sem passar pela UI — mais rápidos e menos frágeis para verificar regras de negócio no back-end.
 - Massa de dados dinâmica: nome, empresa, endereço e telefone usados em cadastro (UI e API) são gerados a cada execução com [Faker](https://faker.readthedocs.io/) (locale `pt_BR`), em vez de valores fixos.
+- Acessibilidade: páginas-chave (login, produtos) são varridas com [axe-core](https://github.com/dequelabs/axe-core) via [axe-playwright-python](https://pypi.org/project/axe-playwright-python/), verificando violações de impacto `critical`/`serious`. É QA passivo — violações encontradas viram nota no relatório HTML, sem quebrar o teste.
 
 ---
 

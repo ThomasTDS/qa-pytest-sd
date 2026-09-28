@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from playwright.sync_api import BrowserContext, Page, sync_playwright
 from pytest_html import extras
 
+from pages.accessibility_page import AccessibilityPage
 from pages.api_page import ApiPage
 from pages.cart_page import CartPage
 from pages.checkout_page import CheckoutPage
@@ -24,6 +25,7 @@ load_dotenv()
 
 PAGE_STASH_KEY = pytest.StashKey[Page]()
 CONTEXT_STASH_KEY = pytest.StashKey[BrowserContext]()
+ACCESSIBILITY_NOTES_STASH_KEY = pytest.StashKey[list[str]]()
 SUPPORTED_BROWSERS = ("chromium", "firefox", "webkit")
 TRACES_DIR = Path("traces")
 
@@ -86,6 +88,11 @@ def api_page(page: Page) -> ApiPage:
     return ApiPage(page)
 
 
+@pytest.fixture
+def accessibility_page(page: Page) -> AccessibilityPage:
+    return AccessibilityPage(page)
+
+
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo[Any]) -> Generator[None]:
     outcome = yield
@@ -117,5 +124,9 @@ def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo[Any]) -> 
             screenshot_bytes = page_fixture.screenshot()
             encoded = base64.b64encode(screenshot_bytes).decode("utf-8")
             report_extras.append(extras.image(encoded, mime_type="image/png"))
+
+    if report.when == "call":
+        for note in item.stash.get(ACCESSIBILITY_NOTES_STASH_KEY, []):
+            report_extras.append(extras.text(note))
 
     report.extras = report_extras

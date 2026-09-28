@@ -24,6 +24,8 @@ markers = [
     "TC-013: redirecionamento HTTP para HTTPS",
     "TC-014: campo de senha deve estar mascarado",
     "TC-015: cookie de sessão deve ter a flag HttpOnly ativada",
+    "TC-016: página de login sem violações críticas de acessibilidade",
+    "TC-017: página de produtos sem violações críticas de acessibilidade",
     "TC-018: lista de produtos via API contém um produto conhecido",
     "TC-019: lista de marcas via API não está vazia",
     "TC-020: busca de produtos via API retorna resultados esperados",

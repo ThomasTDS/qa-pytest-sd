@@ -11,6 +11,5 @@ Um arquivo aqui não substitui o `.feature` correspondente — o `.feature` é a
 | [checkout.md](checkout.md)                       | `features/checkout.feature`  | TC-007, TC-008, TC-023            |
 | [contato-newsletter.md](contato-newsletter.md)   | `features/contact.feature`   | TC-009, TC-010                    |
 | [seguranca.md](seguranca.md)                     | `features/security.feature`  | TC-012 a TC-015                   |
+| [acessibilidade.md](acessibilidade.md)           | `features/accessibility.feature` | TC-016, TC-017                 |
 | [api.md](api.md)                                 | `features/api.feature`       | TC-018 a TC-021, TC-024 a TC-027  |
-
-`TC-016` e `TC-017` (acessibilidade, via axe-core) ainda não têm `.feature` neste repositório — ver `docs/test-cases.md` para o status. Um `acessibilidade.md` será adicionado aqui quando esses cenários forem portados.
