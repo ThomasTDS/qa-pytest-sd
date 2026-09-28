@@ -21,8 +21,8 @@ Para a regra de negócio e a história de usuário por trás de cada test case, 
 | TC-013 | Segurança  | Redirecionamento HTTP para HTTPS                                | Funcional | Alta       | Automatizado | `features/security.feature` |
 | TC-014 | Segurança  | Campo de senha deve estar mascarado                             | Funcional | Média      | Automatizado | `features/security.feature` |
 | TC-015 | Segurança  | Cookie de sessão deve ter a flag HttpOnly ativada               | Funcional | Alta       | Automatizado | `features/security.feature` |
-| TC-016 | Acessibilidade | Página de login sem violações críticas de acessibilidade      | Funcional | Média      | Planejado    | `features/accessibility.feature` |
-| TC-017 | Acessibilidade | Página de produtos sem violações críticas de acessibilidade   | Funcional | Média      | Planejado    | `features/accessibility.feature` |
+| TC-016 | Acessibilidade | Página de login sem violações críticas de acessibilidade      | Funcional | Média      | Automatizado | `features/accessibility.feature` |
+| TC-017 | Acessibilidade | Página de produtos sem violações críticas de acessibilidade   | Funcional | Média      | Automatizado | `features/accessibility.feature` |
 | TC-018 | API        | Lista de produtos via API contém um produto conhecido           | Funcional | Média      | Automatizado | `features/api.feature`      |
 | TC-019 | API        | Lista de marcas via API não está vazia                          | Funcional | Baixa      | Automatizado | `features/api.feature`      |
 | TC-020 | API        | Busca de produtos via API retorna resultados esperados          | Funcional | Média      | Automatizado | `features/api.feature`      |
@@ -34,7 +34,7 @@ Para a regra de negócio e a história de usuário por trás de cada test case, 
 | TC-026 | API        | Criação e remoção de conta via API                              | Funcional | Média      | Automatizado | `features/api.feature`      |
 | TC-027 | API        | Consulta de detalhes do usuário de teste via API                | Funcional | Baixa      | Automatizado | `features/api.feature`      |
 
-A numeração agora está alinhada com o [qa-playwright-sd](https://github.com/ThomasTDS/qa-playwright-sd): mesmo TC-XXX para o mesmo cenário nos dois repositórios. `TC-016` e `TC-017` (acessibilidade, via axe-core) ainda não foram portados para este projeto — ficam reservados aqui como `Planejado` para não quebrar o alinhamento quando forem implementados.
+A numeração está alinhada com o [qa-playwright-sd](https://github.com/ThomasTDS/qa-playwright-sd): mesmo TC-XXX para o mesmo cenário nos dois repositórios.
 
 ## Smoke
 
