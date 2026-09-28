@@ -26,7 +26,7 @@ Feature: Login e cadastro no Automation Exercise
     And ele faz logout
     Then ele deve ver que está deslogado
 
-  @TC-016
+  @TC-022
   Scenario: Tentar se cadastrar com um e-mail já existente
     Given que o usuário está na página de login
     When ele tenta se cadastrar com o e-mail da conta de teste

@@ -16,18 +16,18 @@ Feature: Verificação da API pública do Automation Exercise
   Scenario: API de produtos rejeita método HTTP não suportado
     Then a API de produtos deve rejeitar POST com o código 405
 
-  @TC-022
+  @TC-024
   Scenario: Verificação de login via API com credenciais válidas
     Then a verificação de login via API com a conta de teste deve confirmar que o usuário existe
 
-  @TC-023
+  @TC-025
   Scenario: Verificação de login via API com credenciais inválidas
     Then a verificação de login via API com o e-mail "usuario-invalido@mailinator.com" e a senha "senhaerrada" deve indicar que o usuário não foi encontrado
 
-  @TC-024
+  @TC-026
   Scenario: Criação e remoção de conta via API
     Then a API deve permitir criar e remover uma conta
 
-  @TC-025
+  @TC-027
   Scenario: Consulta de detalhes do usuário de teste via API
     Then a consulta de detalhes do usuário de teste via API deve retornar o seu perfil

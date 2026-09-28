@@ -19,18 +19,20 @@ Rastreabilidade dos casos de teste do projeto. Não duplica os passos dos cenár
 | TC-013 | Segurança  | Redirecionamento HTTP para HTTPS                                | Funcional | Alta       | Automatizado | `features/security.feature` |
 | TC-014 | Segurança  | Campo de senha deve estar mascarado                             | Funcional | Média      | Automatizado | `features/security.feature` |
 | TC-015 | Segurança  | Cookie de sessão deve ter a flag HttpOnly ativada               | Funcional | Alta       | Automatizado | `features/security.feature` |
-| TC-016 | Cadastro   | Tentar se cadastrar com um e-mail já existente                  | Negativo  | Média      | Automatizado | `features/login.feature`    |
-| TC-017 | Checkout   | Carrinho vazio impede prosseguir para o checkout                | Negativo  | Média      | Automatizado | `features/checkout.feature` |
+| TC-016 | Acessibilidade | Página de login sem violações críticas de acessibilidade      | Funcional | Média      | Planejado    | `features/accessibility.feature` |
+| TC-017 | Acessibilidade | Página de produtos sem violações críticas de acessibilidade   | Funcional | Média      | Planejado    | `features/accessibility.feature` |
 | TC-018 | API        | Lista de produtos via API contém um produto conhecido           | Funcional | Média      | Automatizado | `features/api.feature`      |
 | TC-019 | API        | Lista de marcas via API não está vazia                          | Funcional | Baixa      | Automatizado | `features/api.feature`      |
 | TC-020 | API        | Busca de produtos via API retorna resultados esperados          | Funcional | Média      | Automatizado | `features/api.feature`      |
 | TC-021 | API        | API de produtos rejeita método HTTP não suportado               | Negativo  | Baixa      | Automatizado | `features/api.feature`      |
-| TC-022 | API        | Verificação de login via API com credenciais válidas            | Funcional | Média      | Automatizado | `features/api.feature`      |
-| TC-023 | API        | Verificação de login via API com credenciais inválidas          | Negativo  | Média      | Automatizado | `features/api.feature`      |
-| TC-024 | API        | Criação e remoção de conta via API                              | Funcional | Média      | Automatizado | `features/api.feature`      |
-| TC-025 | API        | Consulta de detalhes do usuário de teste via API                | Funcional | Baixa      | Automatizado | `features/api.feature`      |
+| TC-022 | Cadastro   | Tentar se cadastrar com um e-mail já existente                  | Negativo  | Média      | Automatizado | `features/login.feature`    |
+| TC-023 | Checkout   | Carrinho vazio impede prosseguir para o checkout                | Negativo  | Média      | Automatizado | `features/checkout.feature` |
+| TC-024 | API        | Verificação de login via API com credenciais válidas            | Funcional | Média      | Automatizado | `features/api.feature`      |
+| TC-025 | API        | Verificação de login via API com credenciais inválidas          | Negativo  | Média      | Automatizado | `features/api.feature`      |
+| TC-026 | API        | Criação e remoção de conta via API                              | Funcional | Média      | Automatizado | `features/api.feature`      |
+| TC-027 | API        | Consulta de detalhes do usuário de teste via API                | Funcional | Baixa      | Automatizado | `features/api.feature`      |
 
-`TC-016` e `TC-017` são cenários negativos adicionados só neste repositório (não existem ainda no `qa-playwright-sd`). `TC-018` a `TC-025` (testes de API) espelham os mesmos test cases do `qa-playwright-sd`, mas com numeração própria — os dois projetos evoluíram numerações locais independentes depois da migração inicial.
+A numeração agora está alinhada com o [qa-playwright-sd](https://github.com/ThomasTDS/qa-playwright-sd): mesmo TC-XXX para o mesmo cenário nos dois repositórios. `TC-016` e `TC-017` (acessibilidade, via axe-core) ainda não foram portados para este projeto — ficam reservados aqui como `Planejado` para não quebrar o alinhamento quando forem implementados.
 
 ## Smoke
 
