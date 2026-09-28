@@ -1,11 +1,14 @@
 import base64
 import os
+import re
+import time
 from collections.abc import Generator
+from pathlib import Path
 from typing import Any
 
 import pytest
 from dotenv import load_dotenv
-from playwright.sync_api import Page, sync_playwright
+from playwright.sync_api import BrowserContext, Page, sync_playwright
 from pytest_html import extras
 
 from pages.api_page import ApiPage
@@ -20,7 +23,9 @@ from pages.security_page import SecurityPage
 load_dotenv()
 
 PAGE_STASH_KEY = pytest.StashKey[Page]()
+CONTEXT_STASH_KEY = pytest.StashKey[BrowserContext]()
 SUPPORTED_BROWSERS = ("chromium", "firefox", "webkit")
+TRACES_DIR = Path("traces")
 
 
 @pytest.fixture
@@ -32,8 +37,11 @@ def page(request: pytest.FixtureRequest) -> Generator[Page, None, None]:
     with sync_playwright() as playwright:
         browser_type = getattr(playwright, browser_name)
         browser = browser_type.launch(headless=headless)
-        pg = browser.new_page()
+        context = browser.new_context()
+        context.tracing.start(screenshots=True, snapshots=True, sources=True)
+        pg = context.new_page()
         request.node.stash[PAGE_STASH_KEY] = pg
+        request.node.stash[CONTEXT_STASH_KEY] = context
         yield pg
         browser.close()
 
@@ -83,6 +91,25 @@ def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo[Any]) -> 
     outcome = yield
     report = outcome.get_result()  # type: ignore[attr-defined]
     report_extras = getattr(report, "extras", [])
+
+    if report.when == "call":
+        context = item.stash.get(CONTEXT_STASH_KEY, None)
+        if context is not None:
+            if report.failed:
+                TRACES_DIR.mkdir(parents=True, exist_ok=True)
+                browser_name = os.getenv("BROWSER", "chromium")
+                safe_name = re.sub(r"[^a-zA-Z0-9_-]+", "-", item.name)
+                trace_path = (
+                    TRACES_DIR / f"{safe_name}-{browser_name}-{int(time.time() * 1000)}.zip"
+                )
+                context.tracing.stop(path=str(trace_path))
+                report_extras.append(
+                    extras.text(
+                        f'Trace salvo em {trace_path} (abrir com "playwright show-trace <arquivo>")'
+                    )
+                )
+            else:
+                context.tracing.stop()
 
     if report.failed:
         page_fixture = item.stash.get(PAGE_STASH_KEY, None)

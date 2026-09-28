@@ -32,7 +32,7 @@ qa-pytest-sd/
 ├── pages/                 # Page Objects (LoginPage, RegisterPage, ...)
 ├── tests/                 # Arquivos que ligam cada feature aos seus steps (E2E) e testes unitários (tests/unit/)
 ├── reports/               # Relatório HTML gerado a cada execução (não versionado)
-├── conftest.py            # Fixtures do pytest (navegador, página, screenshot em falha)
+├── conftest.py            # Fixtures do pytest (navegador, página, screenshot e trace em falha)
 ├── pyproject.toml         # Configuração do pytest, ruff e mypy
 ├── requirements.txt       # Dependências do projeto
 ├── .env.example           # Modelo de variáveis de ambiente
@@ -161,6 +161,12 @@ pytest --html=reports/report.html --self-contained-html
 ```
 
 Cada execução gera `reports/report.html` (não versionado) com o resultado dos cenários. Testes que falham têm automaticamente um print da tela no momento da falha anexado ao relatório, para facilitar o diagnóstico.
+
+Além do print, cada teste que falha também salva um **trace navegável do Playwright** em `traces/` (não versionado) — grava screenshots, snapshots do DOM e requisições de rede durante todo o cenário, não só o instante da falha. O caminho do arquivo aparece no próprio relatório HTML. Para abrir:
+
+```
+playwright show-trace traces/<arquivo>.zip
+```
 
 ### Lint, formatação e checagem de tipos
 
