@@ -21,17 +21,22 @@ qa-pytest-sd/
 ├── .github/
 │   ├── ISSUE_TEMPLATE/    # Template de bug report
 │   ├── workflows/         # Pipeline de CI (GitHub Actions)
-│   └── dependabot.yml     # Atualização automática de dependências
-├── docs/                  # Matriz de rastreabilidade de test cases
+│   ├── dependabot.yml     # Atualização automática de dependências
+│   └── PULL_REQUEST_TEMPLATE.md  # Template de Pull Request
+├── docs/
+│   ├── criterios-aceite/  # História de usuário + regra de negócio por test case
+│   ├── images/            # Screenshots usados no README
+│   └── test-cases.md      # Matriz de rastreabilidade de test cases
 ├── features/              # Cenários em Gherkin (.feature), compartilhados com o qa-playwright-sd
 ├── steps/                 # Implementação dos steps (pytest-bdd)
 ├── pages/                 # Page Objects (LoginPage, RegisterPage, ...)
 ├── tests/                 # Arquivos que ligam cada feature aos seus steps (E2E) e testes unitários (tests/unit/)
 ├── reports/               # Relatório HTML gerado a cada execução (não versionado)
-├── conftest.py            # Fixtures do pytest (navegador, página, screenshot em falha)
+├── conftest.py            # Fixtures do pytest (navegador, página, screenshot e trace em falha)
 ├── pyproject.toml         # Configuração do pytest, ruff e mypy
 ├── requirements.txt       # Dependências do projeto
 ├── .env.example           # Modelo de variáveis de ambiente
+├── SECURITY.md            # Política de segurança do repositório
 ├── LICENSE                # Licença MIT
 └── README.md              # Este arquivo
 ```
@@ -157,6 +162,12 @@ pytest --html=reports/report.html --self-contained-html
 
 Cada execução gera `reports/report.html` (não versionado) com o resultado dos cenários. Testes que falham têm automaticamente um print da tela no momento da falha anexado ao relatório, para facilitar o diagnóstico.
 
+Além do print, cada teste que falha também salva um **trace navegável do Playwright** em `traces/` (não versionado) — grava screenshots, snapshots do DOM e requisições de rede durante todo o cenário, não só o instante da falha. O caminho do arquivo aparece no próprio relatório HTML. Para abrir:
+
+```
+playwright show-trace traces/<arquivo>.zip
+```
+
 ### Lint, formatação e checagem de tipos
 
 O projeto usa **ruff** (lint + formatação) e **mypy** (checagem de tipos):
@@ -189,6 +200,7 @@ pre-commit run --all-files
 - Page Object Model (POM): separação de responsabilidades, com Pages encapsulando elementos e ações.
 - Testes End-to-End (E2E): simulação de fluxos reais de usuário.
 - Testes de API: validação direta do contrato da API pública do site (`features/api.feature`), sem passar pela UI — mais rápidos e menos frágeis para verificar regras de negócio no back-end.
+- Massa de dados dinâmica: nome, empresa, endereço e telefone usados em cadastro (UI e API) são gerados a cada execução com [Faker](https://faker.readthedocs.io/) (locale `pt_BR`), em vez de valores fixos.
 
 ---
 
@@ -210,7 +222,10 @@ A `main` é protegida: mudanças precisam passar por Pull Request com o check de
 ### Documentação de QA
 
 - Template de bug report em `.github/ISSUE_TEMPLATE/bug_report.md`, com severidade (impacto técnico) e prioridade (urgência de correção) tratadas como campos separados, e causa raiz preenchida só após investigação real.
+- Template de Pull Request em `.github/PULL_REQUEST_TEMPLATE.md`, com checklist de teste local antes de abrir o PR.
 - Matriz de rastreabilidade em `docs/test-cases.md`, ligando cada test case ao cenário `.feature` correspondente via tag `@TC-XXX`.
+- Critérios de aceite (história de usuário + regra de negócio por trás de cada test case) em `docs/criterios-aceite/`.
+- Política de segurança do repositório em `SECURITY.md` (escopo, versões suportadas, como reportar).
 
 ---
 
