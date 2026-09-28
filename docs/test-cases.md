@@ -21,8 +21,16 @@ Rastreabilidade dos casos de teste do projeto. Não duplica os passos dos cenár
 | TC-015 | Segurança  | Cookie de sessão deve ter a flag HttpOnly ativada               | Funcional | Alta       | Automatizado | `features/security.feature` |
 | TC-016 | Cadastro   | Tentar se cadastrar com um e-mail já existente                  | Negativo  | Média      | Automatizado | `features/login.feature`    |
 | TC-017 | Checkout   | Carrinho vazio impede prosseguir para o checkout                | Negativo  | Média      | Automatizado | `features/checkout.feature` |
+| TC-018 | API        | Lista de produtos via API contém um produto conhecido           | Funcional | Média      | Automatizado | `features/api.feature`      |
+| TC-019 | API        | Lista de marcas via API não está vazia                          | Funcional | Baixa      | Automatizado | `features/api.feature`      |
+| TC-020 | API        | Busca de produtos via API retorna resultados esperados          | Funcional | Média      | Automatizado | `features/api.feature`      |
+| TC-021 | API        | API de produtos rejeita método HTTP não suportado               | Negativo  | Baixa      | Automatizado | `features/api.feature`      |
+| TC-022 | API        | Verificação de login via API com credenciais válidas            | Funcional | Média      | Automatizado | `features/api.feature`      |
+| TC-023 | API        | Verificação de login via API com credenciais inválidas          | Negativo  | Média      | Automatizado | `features/api.feature`      |
+| TC-024 | API        | Criação e remoção de conta via API                              | Funcional | Média      | Automatizado | `features/api.feature`      |
+| TC-025 | API        | Consulta de detalhes do usuário de teste via API                | Funcional | Baixa      | Automatizado | `features/api.feature`      |
 
-`TC-016` e `TC-017` são cenários negativos adicionados só neste repositório (não existem ainda no `qa-playwright-sd`).
+`TC-016` e `TC-017` são cenários negativos adicionados só neste repositório (não existem ainda no `qa-playwright-sd`). `TC-018` a `TC-025` (testes de API) espelham os mesmos test cases do `qa-playwright-sd`, mas com numeração própria — os dois projetos evoluíram numerações locais independentes depois da migração inicial.
 
 ## Smoke
 
