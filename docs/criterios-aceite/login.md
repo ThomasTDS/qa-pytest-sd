@@ -36,7 +36,7 @@ Cenários executáveis: `features/login.feature`.
 - **Então** devo ver a mensagem "ACCOUNT CREATED!"
 - **E** a conta criada deve poder ser removida em seguida (limpeza do dado de teste, para não acumular contas na aplicação de terceiros)
 
-> Nota de implementação: o e-mail único é gerado com `uuid4` a cada execução, evitando colisão com contas de execuções anteriores. Os demais dados (nome, empresa, endereço, telefone) são fixos.
+> Nota de implementação: o e-mail único é gerado com `uuid4` a cada execução, evitando colisão com contas de execuções anteriores (inclusive entre workers paralelos do `pytest-xdist`). Os demais dados (nome, empresa, endereço, telefone, senha) são gerados dinamicamente com [Faker](https://faker.readthedocs.io/) (locale `pt_BR`) a cada execução.
 
 ### Critério 4 – Cadastro com e-mail já existente (TC-022)
 

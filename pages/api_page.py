@@ -1,9 +1,11 @@
 import os
 import uuid
 
+from faker import Faker
 from playwright.sync_api import APIResponse, Page
 
 TEST_ACCOUNT_PASSWORD = "SenhaDeTeste123"
+fake = Faker("pt_BR")
 
 
 class ApiPage:
@@ -85,23 +87,23 @@ class ApiPage:
         response = self.page.request.post(
             base_url + "api/createAccount",
             form={
-                "name": "QA Pytest SD",
+                "name": fake.first_name(),
                 "email": email,
                 "password": TEST_ACCOUNT_PASSWORD,
                 "title": "Mr",
                 "birth_date": "10",
                 "birth_month": "5",
                 "birth_year": "1995",
-                "firstname": "QA",
-                "lastname": "Pytest",
-                "company": "qa-pytest-sd",
-                "address1": "Rua de Teste, 123",
+                "firstname": fake.first_name(),
+                "lastname": fake.last_name(),
+                "company": fake.company(),
+                "address1": fake.street_address(),
                 "address2": "",
                 "country": "Canada",
-                "zipcode": "01000-000",
-                "state": "SP",
-                "city": "Sao Paulo",
-                "mobile_number": "11999999999",
+                "zipcode": fake.postcode(),
+                "state": fake.state(),
+                "city": fake.city(),
+                "mobile_number": fake.numerify("##########"),
             },
         )
         assert response.status == 200

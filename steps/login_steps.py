@@ -1,10 +1,13 @@
 import os
 import uuid
 
+from faker import Faker
 from pytest_bdd import given, parsers, then, when
 
 from pages.login_page import LoginPage
 from pages.register_page import AccountInfo, RegisterPage
+
+fake = Faker("pt_BR")
 
 
 @given("que o usuário está na página de login")
@@ -44,19 +47,21 @@ def assert_logged_out(login_page: LoginPage) -> None:
 
 @when("ele se cadastra com um e-mail novo")
 def signup_new_user(register_page: RegisterPage) -> None:
+    first_name = fake.first_name()
+    last_name = fake.last_name()
     unique_email = f"qa-pytest-sd-{uuid.uuid4().hex}@mailinator.com"
-    register_page.start_signup("QA Pytest SD", unique_email)
+    register_page.start_signup(f"{first_name} {last_name}", unique_email)
     register_page.fill_account_information(
         AccountInfo(
-            password="SenhaDeTeste123",
-            first_name="QA",
-            last_name="Pytest",
-            company="qa-pytest-sd",
-            address="Rua de Teste, 123",
-            state="SP",
-            city="Sao Paulo",
-            zipcode="01000-000",
-            mobile_number="11999999999",
+            password=fake.password(length=12, special_chars=False),
+            first_name=first_name,
+            last_name=last_name,
+            company=fake.company(),
+            address=fake.street_address(),
+            state=fake.state(),
+            city=fake.city(),
+            zipcode=fake.postcode(),
+            mobile_number=fake.numerify("##########"),
             country="Canada",
         )
     )

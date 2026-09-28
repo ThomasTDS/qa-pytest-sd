@@ -59,7 +59,7 @@ Diferente dos demais critérios, estes não simulam um usuário navegando pela U
 - **Então** a resposta deve ter `responseCode: 201`
 - **E** ao remover essa conta via `DELETE /api/deleteAccount`, a resposta deve ter `responseCode: 200`
 
-> Nota de implementação: o e-mail é gerado com `uuid4` a cada execução, e a conta é sempre removida ao final do teste, para não acumular contas descartáveis na aplicação de terceiros.
+> Nota de implementação: o e-mail é gerado com `uuid4` a cada execução, e a conta é sempre removida ao final do teste, para não acumular contas descartáveis na aplicação de terceiros. Os demais dados do cadastro (nome, empresa, endereço, telefone) vêm do [Faker](https://faker.readthedocs.io/) (locale `pt_BR`) — a senha continua fixa, já que é reaproveitada na remoção da mesma conta.
 
 ### Critério 8 – Consulta de usuário por e-mail (TC-027)
 
