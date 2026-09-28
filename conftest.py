@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from playwright.sync_api import Page, sync_playwright
 from pytest_html import extras
 
+from pages.api_page import ApiPage
 from pages.cart_page import CartPage
 from pages.checkout_page import CheckoutPage
 from pages.contact_page import ContactPage
@@ -70,6 +71,11 @@ def contact_page(page: Page) -> ContactPage:
 @pytest.fixture
 def security_page(page: Page) -> SecurityPage:
     return SecurityPage(page)
+
+
+@pytest.fixture
+def api_page(page: Page) -> ApiPage:
+    return ApiPage(page)
 
 
 @pytest.hookimpl(hookwrapper=True)

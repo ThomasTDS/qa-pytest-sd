@@ -188,6 +188,7 @@ pre-commit run --all-files
 - BDD / Gherkin: cenários claros e legíveis em `.feature`, compartilhados com o projeto irmão em TypeScript.
 - Page Object Model (POM): separação de responsabilidades, com Pages encapsulando elementos e ações.
 - Testes End-to-End (E2E): simulação de fluxos reais de usuário.
+- Testes de API: validação direta do contrato da API pública do site (`features/api.feature`), sem passar pela UI — mais rápidos e menos frágeis para verificar regras de negócio no back-end.
 
 ---
 
