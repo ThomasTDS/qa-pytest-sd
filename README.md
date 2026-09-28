@@ -21,8 +21,12 @@ qa-pytest-sd/
 ├── .github/
 │   ├── ISSUE_TEMPLATE/    # Template de bug report
 │   ├── workflows/         # Pipeline de CI (GitHub Actions)
-│   └── dependabot.yml     # Atualização automática de dependências
-├── docs/                  # Matriz de rastreabilidade de test cases
+│   ├── dependabot.yml     # Atualização automática de dependências
+│   └── PULL_REQUEST_TEMPLATE.md  # Template de Pull Request
+├── docs/
+│   ├── criterios-aceite/  # História de usuário + regra de negócio por test case
+│   ├── images/            # Screenshots usados no README
+│   └── test-cases.md      # Matriz de rastreabilidade de test cases
 ├── features/              # Cenários em Gherkin (.feature), compartilhados com o qa-playwright-sd
 ├── steps/                 # Implementação dos steps (pytest-bdd)
 ├── pages/                 # Page Objects (LoginPage, RegisterPage, ...)
@@ -32,6 +36,7 @@ qa-pytest-sd/
 ├── pyproject.toml         # Configuração do pytest, ruff e mypy
 ├── requirements.txt       # Dependências do projeto
 ├── .env.example           # Modelo de variáveis de ambiente
+├── SECURITY.md            # Política de segurança do repositório
 ├── LICENSE                # Licença MIT
 └── README.md              # Este arquivo
 ```
@@ -210,7 +215,10 @@ A `main` é protegida: mudanças precisam passar por Pull Request com o check de
 ### Documentação de QA
 
 - Template de bug report em `.github/ISSUE_TEMPLATE/bug_report.md`, com severidade (impacto técnico) e prioridade (urgência de correção) tratadas como campos separados, e causa raiz preenchida só após investigação real.
+- Template de Pull Request em `.github/PULL_REQUEST_TEMPLATE.md`, com checklist de teste local antes de abrir o PR.
 - Matriz de rastreabilidade em `docs/test-cases.md`, ligando cada test case ao cenário `.feature` correspondente via tag `@TC-XXX`.
+- Critérios de aceite (história de usuário + regra de negócio por trás de cada test case) em `docs/criterios-aceite/`.
+- Política de segurança do repositório em `SECURITY.md` (escopo, versões suportadas, como reportar).
 
 ---
 
