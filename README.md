@@ -37,6 +37,7 @@ qa-pytest-sd/
 ├── pyproject.toml         # Configuração do pytest, ruff e mypy
 ├── requirements.txt       # Dependências do projeto
 ├── .env.example           # Modelo de variáveis de ambiente
+├── Dockerfile             # Imagem para rodar os testes containerizados
 ├── SECURITY.md            # Política de segurança do repositório
 ├── LICENSE                # Licença MIT
 └── README.md              # Este arquivo
@@ -86,6 +87,22 @@ TEST_USER_PASSWORD=
 ```
 
 No CI, essas mesmas variáveis vêm de GitHub Secrets (`TEST_USER_EMAIL`/`TEST_USER_PASSWORD`), configurados no repositório.
+
+### Rodar com Docker
+
+O `Dockerfile` usa a imagem oficial do Playwright para Python (já com Chromium, Firefox e WebKit instalados), então não é preciso instalar Python ou navegadores localmente.
+
+```bash
+docker build -t qa-pytest-sd .
+
+docker run --rm --env-file .env -v "$(pwd)/reports:/app/reports" qa-pytest-sd
+```
+
+O `--env-file .env` repassa as credenciais de teste para o container, e o volume em `reports/` traz o relatório HTML gerado de volta para a máquina host. Para rodar em outro navegador ou outro comando, passe a variável ou o comando por cima do `CMD` padrão, por exemplo:
+
+```bash
+docker run --rm --env-file .env -e BROWSER=firefox -v "$(pwd)/reports:/app/reports" qa-pytest-sd
+```
 
 ### Rodar todos os testes
 

@@ -30,6 +30,9 @@ jobs:
 
       - run: mypy .
 
+      - name: Valida build da imagem Docker
+        run: docker build -t qa-pytest-sd .
+
       - name: Cache navegadores do Playwright
         uses: actions/cache@v6
         with:
