@@ -6,6 +6,7 @@ from collections.abc import Generator
 from pathlib import Path
 from typing import Any
 
+import allure
 import pytest
 from dotenv import load_dotenv
 from playwright.sync_api import BrowserContext, Page, sync_playwright
@@ -110,11 +111,11 @@ def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo[Any]) -> 
                     TRACES_DIR / f"{safe_name}-{browser_name}-{int(time.time() * 1000)}.zip"
                 )
                 context.tracing.stop(path=str(trace_path))
-                report_extras.append(
-                    extras.text(
-                        f'Trace salvo em {trace_path} (abrir com "playwright show-trace <arquivo>")'
-                    )
+                trace_note = (
+                    f'Trace salvo em {trace_path} (abrir com "playwright show-trace <arquivo>")'
                 )
+                report_extras.append(extras.text(trace_note))
+                allure.attach(trace_note, name="trace", attachment_type=allure.attachment_type.TEXT)
             else:
                 context.tracing.stop()
 
@@ -124,9 +125,13 @@ def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo[Any]) -> 
             screenshot_bytes = page_fixture.screenshot()
             encoded = base64.b64encode(screenshot_bytes).decode("utf-8")
             report_extras.append(extras.image(encoded, mime_type="image/png"))
+            allure.attach(
+                screenshot_bytes, name="screenshot", attachment_type=allure.attachment_type.PNG
+            )
 
     if report.when == "call":
         for note in item.stash.get(ACCESSIBILITY_NOTES_STASH_KEY, []):
             report_extras.append(extras.text(note))
+            allure.attach(note, name="acessibilidade", attachment_type=allure.attachment_type.TEXT)
 
     report.extras = report_extras
