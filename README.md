@@ -32,6 +32,7 @@ qa-pytest-sd/
 ├── pages/                 # Page Objects (LoginPage, RegisterPage, ...)
 ├── tests/                 # Arquivos que ligam cada feature aos seus steps (E2E) e testes unitários (tests/unit/)
 ├── reports/               # Relatório HTML gerado a cada execução (não versionado)
+├── allure-results/        # Dados brutos do Allure Report (não versionado)
 ├── conftest.py            # Fixtures do pytest (navegador, página, screenshot e trace em falha)
 ├── pyproject.toml         # Configuração do pytest, ruff e mypy
 ├── requirements.txt       # Dependências do projeto
@@ -168,6 +169,25 @@ Além do print, cada teste que falha também salva um **trace navegável do Play
 playwright show-trace traces/<arquivo>.zip
 ```
 
+### Relatório Allure
+
+Além do HTML do pytest, é possível gerar dados para o [Allure Report](https://allurereport.org/) em `allure-results/` (não versionado):
+
+```
+pytest --alluredir=allure-results
+```
+
+Gerar e visualizar o relatório requer o [Allure Commandline](https://allurereport.org/docs/install/) instalado localmente (não é um pacote pip, é uma ferramenta Java separada — via Scoop no Windows: `scoop install allure`, via Homebrew no macOS/Linux: `brew install allure`, ou baixando o `.zip`/`.tgz` da [página de releases](https://github.com/allure-framework/allure2/releases)):
+
+```
+allure generate allure-results --clean -o allure-report   # gera allure-report/ a partir de allure-results/
+allure open allure-report                                  # abre o relatório gerado no navegador
+# ou, sem gerar antes:
+allure serve allure-results
+```
+
+O Allure agrupa os cenários por suíte, mostra o status de cada execução e anexa os mesmos extras do relatório HTML (print e trace em falha, nota de acessibilidade quando o axe-core encontra violações) — é mais navegável que o HTML simples do pytest-html para investigar uma suíte grande ou comparar execuções.
+
 ### Lint, formatação e checagem de tipos
 
 O projeto usa **ruff** (lint + formatação) e **mypy** (checagem de tipos):
@@ -207,7 +227,7 @@ pre-commit run --all-files
 
 ### CI/CD
 
-O projeto roda automaticamente via GitHub Actions (`.github/workflows/tests.yml`) a cada push/PR para a `main` e diariamente às 06:00 UTC. Antes dos testes, o CI valida lint (`ruff check`), formatação (`ruff format --check`) e tipos (`mypy`), quebrando o build se algo estiver fora do padrão. A suíte roda três vezes — uma por navegador (Chromium, Firefox e WebKit) — cada uma em paralelo (`pytest -n auto`, via pytest-xdist), e o relatório HTML de cada navegador é publicado como artifact da execução. Cenários que falham são reexecutados automaticamente uma vez (`--reruns 1`), para absorver instabilidades pontuais de rede sem mascarar bugs reais de código.
+O projeto roda automaticamente via GitHub Actions (`.github/workflows/tests.yml`) a cada push/PR para a `main` e diariamente às 06:00 UTC. Antes dos testes, o CI valida lint (`ruff check`), formatação (`ruff format --check`) e tipos (`mypy`), quebrando o build se algo estiver fora do padrão. A suíte roda três vezes — uma por navegador (Chromium, Firefox e WebKit) — cada uma em paralelo (`pytest -n auto`, via pytest-xdist), acumulando os resultados das três em um único relatório Allure. O relatório HTML de cada navegador e o relatório Allure consolidado são publicados como artifacts da execução. Cenários que falham são reexecutados automaticamente uma vez (`--reruns 1`), para absorver instabilidades pontuais de rede sem mascarar bugs reais de código.
 
 Dependências pip e os binários dos navegadores do Playwright são cacheados entre execuções (`actions/cache`, invalidado automaticamente quando `requirements.txt` muda), o que evita rebaixar ~200MB de navegadores a cada run.
 
