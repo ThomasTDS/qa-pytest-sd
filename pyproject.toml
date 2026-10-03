@@ -64,4 +64,5 @@ disallow_untyped_defs = true
 
 [tool.mutmut]
 source_paths = ["pages"]
+also_copy = ["steps", "features", "tests", "conftest.py", "pyproject.toml"]
 pytest_add_cli_args_test_selection = ["-m", "unit", "-p", "no:cacheprovider"]
