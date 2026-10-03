@@ -24,18 +24,32 @@ jobs:
       - name: Roda mutation testing (testes unitários)
         run: mutmut run
 
-      - name: Exporta estatísticas
+      - name: Exporta estatísticas e lista mutantes sobreviventes
         if: always()
         run: |
           mutmut export-cicd-stats
-          mutmut results --all > mutation-results.txt || true
-          cat mutation-results.txt >> "$GITHUB_STEP_SUMMARY"
+          python - <<'EOF'
+          import glob
+          import json
+          import os
+          import subprocess
+
+          survivors = []
+          for meta in glob.glob("mutants/pages/**/*.meta", recursive=True):
+              with open(meta, encoding="utf-8") as f:
+                  data = json.load(f)
+              survivors += [key for key, code in data.get("exit_code_by_key", {}).items() if code == 0]
+
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as summary:
+              summary.write(f"## Mutantes sobreviventes ({len(survivors)})\n\n")
+              for key in survivors:
+                  diff = subprocess.run(["mutmut", "show", key], capture_output=True, text=True).stdout
+                  summary.write(f"### `{key}`\n\n```diff\n{diff}\n```\n\n")
+          EOF
 
       - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: mutation-results
-          path: |
-            mutants/mutmut-cicd-stats.json
-            mutation-results.txt
+          path: mutants/mutmut-cicd-stats.json
           if-no-files-found: ignore
