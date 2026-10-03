@@ -38,6 +38,7 @@ markers = [
     "TC-027: consulta de detalhes do usuário de teste via API",
     "smoke: cenário crítico de ponta a ponta",
     "unit: testes unitários de page objects, sem navegador real",
+    "visual: comparação visual de páginas contra baselines de screenshot",
 ]
 
 [tool.coverage.run]
