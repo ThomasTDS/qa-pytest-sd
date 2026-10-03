@@ -1,0 +1,58 @@
+name: mutation
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 7 * * 1'
+
+jobs:
+  mutate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - run: pip install -r requirements.txt
+
+      - name: Roda mutation testing (testes unitários)
+        run: mutmut run
+
+      - name: Exporta estatísticas e lista mutantes sobreviventes
+        if: always()
+        run: |
+          mutmut export-cicd-stats
+          python - <<'EOF'
+          import glob
+          import json
+          import os
+          import subprocess
+
+          survivors = []
+          for meta in glob.glob("mutants/pages/**/*.meta", recursive=True):
+              with open(meta, encoding="utf-8") as f:
+                  data = json.load(f)
+              survivors += [key for key, code in data.get("exit_code_by_key", {}).items() if code == 0]
+
+          report = f"## Mutantes sobreviventes ({len(survivors)})\n\n"
+          for key in survivors:
+              diff = subprocess.run(["mutmut", "show", key], capture_output=True, text=True).stdout
+              report += f"### `{key}`\n\n```diff\n{diff}\n```\n\n"
+          with open("mutation-survivors.md", "w", encoding="utf-8") as f:
+              f.write(report)
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as summary:
+              summary.write(report)
+          EOF
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: mutation-results
+          path: |
+            mutants/mutmut-cicd-stats.json
+            mutation-survivors.md
+          if-no-files-found: ignore
