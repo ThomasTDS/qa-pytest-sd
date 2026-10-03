@@ -16,6 +16,8 @@ traces/
 reports/
 allure-results/
 allure-report/
+htmlcov/
+.coverage
 
 # Environment files
 .env

@@ -205,6 +205,19 @@ allure serve allure-results
 
 O Allure agrupa os cenários por suíte, mostra o status de cada execução e anexa os mesmos extras do relatório HTML (print e trace em falha, nota de acessibilidade quando o axe-core encontra violações) — é mais navegável que o HTML simples do pytest-html para investigar uma suíte grande ou comparar execuções.
 
+### Cobertura de código
+
+Para medir quais linhas dos Page Objects e dos steps são executadas pela suíte:
+
+```
+pytest --cov                                  # resumo no terminal, com linhas não cobertas
+pytest --cov --cov-report=html                # gera htmlcov/index.html com o detalhe por arquivo
+```
+
+A cobertura considera `pages/` e `steps/` (configurado em `pyproject.toml`). O backend do coverage é o `sysmon`, porque o Playwright sync API usa greenlets e o tracer padrão perde linhas executadas logo após chamadas ao navegador — com o padrão, `api_page.py` aparecia com ~69% em vez de ~98%.
+
+Uma cobertura alta não garante que os cenários verificam o comportamento certo; use o relatório para achar caminhos que nenhum teste exercita, não como meta.
+
 ### Lint, formatação e checagem de tipos
 
 O projeto usa **ruff** (lint + formatação) e **mypy** (checagem de tipos):
