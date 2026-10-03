@@ -18,6 +18,7 @@ allure-results/
 allure-report/
 htmlcov/
 .coverage
+coverage.xml
 
 # Environment files
 .env

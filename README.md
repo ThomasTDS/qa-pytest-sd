@@ -1,6 +1,7 @@
 # 🧪 QA Pytest + Playwright - Automation Exercise
 
 ![tests](https://github.com/ThomasTDS/qa-pytest-sd/actions/workflows/tests.yml/badge.svg)
+[![codecov](https://codecov.io/gh/ThomasTDS/qa-pytest-sd/branch/main/graph/badge.svg)](https://codecov.io/gh/ThomasTDS/qa-pytest-sd)
 ![license](https://img.shields.io/badge/license-MIT-blue.svg)
 ![python](https://img.shields.io/badge/python-%3E%3D3.12-brightgreen.svg)
 
@@ -217,6 +218,8 @@ pytest --cov --cov-report=html                # gera htmlcov/index.html com o de
 A cobertura considera `pages/` e `steps/` (configurado em `pyproject.toml`). O backend do coverage é o `sysmon`, porque o Playwright sync API usa greenlets e o tracer padrão perde linhas executadas logo após chamadas ao navegador — com o padrão, `api_page.py` aparecia com ~69% em vez de ~98%.
 
 Uma cobertura alta não garante que os cenários verificam o comportamento certo; use o relatório para achar caminhos que nenhum teste exercita, não como meta.
+
+No CI, a cobertura é medida na rodada do Chromium e enviada ao [Codecov](https://codecov.io/gh/ThomasTDS/qa-pytest-sd), que alimenta o badge do topo deste README. O envio exige o secret `CODECOV_TOKEN`; sem ele, o CI segue verde, mas o badge não atualiza.
 
 ### Lint, formatação e checagem de tipos
 
