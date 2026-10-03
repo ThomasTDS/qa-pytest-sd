@@ -25,5 +25,8 @@ coverage.xml
 .env.local
 .env.*.local
 
+# Mutation testing
+mutants/
+
 # VS Code
 .vscode/
