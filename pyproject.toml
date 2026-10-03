@@ -40,6 +40,15 @@ markers = [
     "unit: testes unitários de page objects, sem navegador real",
 ]
 
+[tool.coverage.run]
+source = ["pages", "steps"]
+# O Playwright sync API usa greenlets, e o tracer padrão do coverage perde linhas
+# executadas logo após chamadas do Playwright. O backend sysmon não tem esse problema.
+core = "sysmon"
+
+[tool.coverage.report]
+show_missing = true
+
 [tool.ruff]
 line-length = 100
 target-version = "py312"
