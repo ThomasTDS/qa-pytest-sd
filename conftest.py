@@ -100,7 +100,8 @@ def pytest_runtest_logreport(report: pytest.TestReport) -> None:
         return
     FLAKY_LOG.parent.mkdir(parents=True, exist_ok=True)
     browser_name = os.getenv("BROWSER", "chromium")
-    reason = report.longreprtext.strip().splitlines()[-1] if report.longreprtext else ""
+    lines = report.longreprtext.strip().splitlines() or [""]
+    reason = next((line for line in reversed(lines) if line.startswith("E ")), lines[-1])
     with FLAKY_LOG.open("a", encoding="utf-8") as log:
         log.write(f"{browser_name}\t{report.nodeid}\t{reason}\n")
 
