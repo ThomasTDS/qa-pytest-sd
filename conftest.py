@@ -96,7 +96,6 @@ def accessibility_page(page: Page) -> AccessibilityPage:
 
 
 def pytest_runtest_logreport(report: pytest.TestReport) -> None:
-    return
     if report.outcome != "rerun" or os.getenv("PYTEST_XDIST_WORKER"):
         return
     FLAKY_LOG.parent.mkdir(parents=True, exist_ok=True)
