@@ -73,6 +73,28 @@ jobs:
           TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
           TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
+      - name: Resumo de testes que precisaram de rerun
+        if: always()
+        run: |
+          {
+            echo "## Testes que precisaram de rerun"
+            echo
+            if [ -s reports/flaky-tests.tsv ]; then
+              echo "| Navegador | Teste | Último erro |"
+              echo "|---|---|---|"
+              awk -F'\t' '{ gsub(/\|/, "\\\\|", $3); printf "| %s | `%s` | %s |\n", $1, $2, $3 }' reports/flaky-tests.tsv
+            else
+              echo "Nenhum teste precisou de rerun nesta execução."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: flaky-tests
+          path: reports/flaky-tests.tsv
+          if-no-files-found: ignore
+
       - uses: actions/upload-artifact@v7
         if: always()
         with:
