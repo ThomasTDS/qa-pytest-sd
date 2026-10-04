@@ -91,13 +91,6 @@ jobs:
       - uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: visual-diffs
-          path: reports/visual/
-          if-no-files-found: ignore
-
-      - uses: actions/upload-artifact@v7
-        if: always()
-        with:
           name: flaky-tests
           path: reports/flaky-tests.tsv
           if-no-files-found: ignore
