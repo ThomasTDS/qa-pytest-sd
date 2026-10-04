@@ -23,15 +23,18 @@ CHANNEL_TOLERANCE = 16
 MAX_DIFFERENT_PIXELS_RATIO = 0.001
 # Anúncios do Google AdSense mudam a cada carregamento e alteram a altura da página.
 THIRD_PARTY_CONTENT_CSS = "ins.adsbygoogle, iframe { display: none !important; }"
-WAIT_FOR_IMAGES_JS = """() => Promise.all([...document.images].map(img => img.complete ? null :
-    new Promise(resolve => { img.onload = img.onerror = resolve; })))"""
+WAIT_FOR_RENDER_JS = """async () => {
+    await document.fonts.ready;
+    await Promise.all([...document.images].map(img => img.complete ? null :
+        new Promise(resolve => { img.onload = img.onerror = resolve; })));
+}"""
 
 
 def assert_matches_baseline(page: Page, name: str, full_page: bool = True) -> None:
     browser_name = os.getenv("BROWSER", "chromium")
     baseline_path = BASELINES_DIR / f"{name}-{browser_name}.png"
     page.add_style_tag(content=THIRD_PARTY_CONTENT_CSS)
-    page.evaluate(WAIT_FOR_IMAGES_JS)
+    page.evaluate(WAIT_FOR_RENDER_JS)
     screenshot = page.screenshot(full_page=full_page, animations="disabled", caret="hide")
     actual = Image.open(BytesIO(screenshot)).convert("RGB")
 
