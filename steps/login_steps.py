@@ -46,14 +46,15 @@ def assert_logged_out(login_page: LoginPage) -> None:
 
 
 @when("ele se cadastra com um e-mail novo")
-def signup_new_user(register_page: RegisterPage) -> None:
+def signup_new_user(register_page: RegisterPage, created_accounts: list[tuple[str, str]]) -> None:
     first_name = fake.first_name()
     last_name = fake.last_name()
     unique_email = f"qa-pytest-sd-{uuid.uuid4().hex}@mailinator.com"
+    password = fake.password(length=12, special_chars=False)
     register_page.start_signup(f"{first_name} {last_name}", unique_email)
     register_page.fill_account_information(
         AccountInfo(
-            password=fake.password(length=12, special_chars=False),
+            password=password,
             first_name=first_name,
             last_name=last_name,
             company=fake.company(),
@@ -65,6 +66,7 @@ def signup_new_user(register_page: RegisterPage) -> None:
             country="Canada",
         )
     )
+    created_accounts.append((unique_email, password))
 
 
 @then(parsers.parse('ele deve ver a mensagem "{expected_message}"'))
@@ -73,9 +75,12 @@ def assert_account_message(register_page: RegisterPage, expected_message: str) -
 
 
 @then("a conta criada deve poder ser removida")
-def delete_created_account(register_page: RegisterPage) -> None:
+def delete_created_account(
+    register_page: RegisterPage, created_accounts: list[tuple[str, str]]
+) -> None:
     register_page.continue_after_account_created()
     register_page.delete_account()
+    created_accounts.clear()
 
 
 @when("ele tenta se cadastrar com o e-mail da conta de teste")

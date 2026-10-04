@@ -2,6 +2,7 @@ import base64
 import os
 import re
 import time
+import warnings
 from collections.abc import Generator
 from pathlib import Path
 from typing import Any
@@ -93,6 +94,16 @@ def api_page(page: Page) -> ApiPage:
 @pytest.fixture
 def accessibility_page(page: Page) -> AccessibilityPage:
     return AccessibilityPage(page)
+
+
+@pytest.fixture
+def created_accounts(page: Page) -> Generator[list[tuple[str, str]], None, None]:
+    accounts: list[tuple[str, str]] = []
+    yield accounts
+    api_page = ApiPage(page)
+    for email, password in accounts:
+        if not api_page.try_delete_account(email, password):
+            warnings.warn(f"conta de teste não removida, remover manualmente: {email}")
 
 
 def pytest_runtest_logreport(report: pytest.TestReport) -> None:

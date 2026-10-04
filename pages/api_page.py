@@ -110,15 +110,22 @@ class ApiPage:
         body = response.json()
         assert body["responseCode"] == 201
 
-    def delete_account(self, email: str) -> None:
-        base_url = os.getenv("BASE_URL", "https://automationexercise.com/")
-        response = self.page.request.delete(
-            base_url + "api/deleteAccount",
-            form={"email": email, "password": TEST_ACCOUNT_PASSWORD},
-        )
+    def delete_account(self, email: str, password: str = TEST_ACCOUNT_PASSWORD) -> None:
+        response = self._request_delete_account(email, password)
         assert response.status == 200
         body = response.json()
         assert body["responseCode"] == 200
+
+    def try_delete_account(self, email: str, password: str) -> bool:
+        response = self._request_delete_account(email, password)
+        return response.status == 200 and response.json()["responseCode"] == 200
+
+    def _request_delete_account(self, email: str, password: str) -> APIResponse:
+        base_url = os.getenv("BASE_URL", "https://automationexercise.com/")
+        return self.page.request.delete(
+            base_url + "api/deleteAccount",
+            form={"email": email, "password": password},
+        )
 
     def assert_create_and_delete_account_roundtrip(self) -> None:
         email = f"qa-pytest-sd-{uuid.uuid4().hex}@mailinator.com"
