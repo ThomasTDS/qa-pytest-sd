@@ -22,4 +22,6 @@ class ProductsPage:
     def add_product_to_cart(self, product_name: str) -> None:
         product_card = self.page.locator(".product-image-wrapper").filter(has_text=product_name)
         product_card.locator(".productinfo .add-to-cart").click()
-        self.page.locator('button.close-modal[data-dismiss="modal"]').click()
+        close_button = self.page.locator('button.close-modal[data-dismiss="modal"]')
+        expect(close_button).to_be_visible()
+        close_button.click()
