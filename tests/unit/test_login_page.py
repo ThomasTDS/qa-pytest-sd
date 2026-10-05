@@ -42,6 +42,20 @@ def test_login_with_test_user_raises_when_credentials_missing() -> None:
         LoginPage(page).login_with_test_user()
 
 
+@pytest.mark.parametrize(
+    ("env", "value"),
+    [("TEST_USER_EMAIL", "user@test.com"), ("TEST_USER_PASSWORD", "secret")],
+)
+def test_login_with_test_user_raises_when_only_one_credential_is_set(
+    monkeypatch: pytest.MonkeyPatch, env: str, value: str
+) -> None:
+    monkeypatch.setenv(env, value)
+    page, _ = make_page_mock()
+
+    with pytest.raises(RuntimeError, match="TEST_USER_EMAIL"):
+        LoginPage(page).login_with_test_user()
+
+
 def test_login_with_test_user_logs_in_with_env_credentials(monkeypatch: pytest.MonkeyPatch) -> None:
     # assert_logged_in() usa expect() do Playwright, que nao funciona sobre um Page
     # mockado (nao e um Locator/Page real) - stub para isolar so a logica de delegacao.
