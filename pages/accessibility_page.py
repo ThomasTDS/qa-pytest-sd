@@ -22,7 +22,7 @@ class AccessibilityPage:
         results = self._axe.run(self.page)
         return [
             AccessibilityViolation(
-                impact=violation.get("impact") or "desconhecido",
+                impact=violation["impact"],
                 id=violation["id"],
                 description=violation["description"],
                 element_count=len(violation["nodes"]),
