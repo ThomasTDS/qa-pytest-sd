@@ -11,7 +11,7 @@ class LoginPage:
 
     def goto(self) -> None:
         base_url = os.getenv("BASE_URL", "https://automationexercise.com/")
-        self.page.goto(base_url + "login")
+        self.page.goto(base_url + "login", wait_until="domcontentloaded")
 
     def login(self, email: str, password: str) -> None:
         self.page.locator('[data-qa="login-email"]').fill(email)

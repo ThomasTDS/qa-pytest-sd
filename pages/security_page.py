@@ -22,7 +22,7 @@ class SecurityPage:
 
     def assert_password_field_is_masked(self) -> None:
         base_url = os.getenv("BASE_URL", "https://automationexercise.com/")
-        self.page.goto(base_url + "login")
+        self.page.goto(base_url + "login", wait_until="domcontentloaded")
         expect(self.page.locator('[data-qa="login-password"]')).to_have_attribute(
             "type", "password"
         )

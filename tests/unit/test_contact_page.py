@@ -11,7 +11,9 @@ def test_goto_uses_contact_us_path() -> None:
 
     ContactPage(page).goto()
 
-    page.goto.assert_called_once_with("https://automationexercise.com/contact_us")
+    page.goto.assert_called_once_with(
+        "https://automationexercise.com/contact_us", wait_until="domcontentloaded"
+    )
 
 
 def test_goto_home_uses_bare_base_url(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -20,7 +22,7 @@ def test_goto_home_uses_bare_base_url(monkeypatch: pytest.MonkeyPatch) -> None:
 
     ContactPage(page).goto_home()
 
-    page.goto.assert_called_once_with("https://staging.example.com/")
+    page.goto.assert_called_once_with("https://staging.example.com/", wait_until="domcontentloaded")
 
 
 def test_submit_form_registers_dialog_handler_and_fills_fields() -> None:

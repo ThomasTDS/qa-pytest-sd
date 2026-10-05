@@ -9,7 +9,7 @@ class CartPage:
 
     def goto(self) -> None:
         base_url = os.getenv("BASE_URL", "https://automationexercise.com/")
-        self.page.goto(base_url + "view_cart")
+        self.page.goto(base_url + "view_cart", wait_until="domcontentloaded")
 
     def assert_product_in_cart(self, product_name: str) -> None:
         expect(self.page.locator("tr").filter(has_text=product_name)).to_be_visible()

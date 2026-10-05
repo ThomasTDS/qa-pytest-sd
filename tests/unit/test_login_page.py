@@ -14,7 +14,9 @@ def test_goto_uses_default_base_url_when_env_not_set() -> None:
 
     LoginPage(page).goto()
 
-    page.goto.assert_called_once_with("https://automationexercise.com/login")
+    page.goto.assert_called_once_with(
+        "https://automationexercise.com/login", wait_until="domcontentloaded"
+    )
 
 
 def test_goto_uses_base_url_from_env(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -23,7 +25,9 @@ def test_goto_uses_base_url_from_env(monkeypatch: pytest.MonkeyPatch) -> None:
 
     LoginPage(page).goto()
 
-    page.goto.assert_called_once_with("https://staging.example.com/login")
+    page.goto.assert_called_once_with(
+        "https://staging.example.com/login", wait_until="domcontentloaded"
+    )
 
 
 def test_login_fills_email_and_password_and_clicks() -> None:
