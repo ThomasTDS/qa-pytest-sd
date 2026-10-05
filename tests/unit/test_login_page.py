@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 import pytest
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
 from pages.login_page import LoginPage
 from tests.unit.mocks import make_page_mock
@@ -68,3 +69,17 @@ def test_login_with_test_user_logs_in_with_env_credentials(monkeypatch: pytest.M
 
     locators['[data-qa="login-email"]'].fill.assert_called_once_with("user@test.com")
     locators['[data-qa="login-password"]'].fill.assert_called_once_with("secret")
+
+
+def test_is_on_login_page_returns_true_when_url_reaches_login() -> None:
+    page, _ = make_page_mock()
+
+    assert LoginPage(page).is_on_login_page() is True
+    page.wait_for_url.assert_called_once()
+
+
+def test_is_on_login_page_returns_false_when_url_never_reaches_login() -> None:
+    page, _ = make_page_mock()
+    page.wait_for_url.side_effect = PlaywrightTimeoutError("timeout")
+
+    assert LoginPage(page).is_on_login_page() is False

@@ -2,6 +2,7 @@ import os
 import re
 
 from playwright.sync_api import Page, expect
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
 
 class LoginPage:
@@ -35,6 +36,16 @@ class LoginPage:
 
     def logout(self) -> None:
         self.page.locator('a[href="/logout"]').click()
+
+    def is_on_login_page(self, timeout_ms: int = 10_000) -> bool:
+        try:
+            self.page.wait_for_url(re.compile(r"/login$"), timeout=timeout_ms)
+        except PlaywrightTimeoutError:
+            return False
+        return True
+
+    def reload(self) -> None:
+        self.page.reload()
 
     def assert_logged_out(self) -> None:
         expect(self.page).to_have_url(re.compile(r"/login$"))
