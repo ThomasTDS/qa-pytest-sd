@@ -2,6 +2,8 @@ from dataclasses import dataclass
 
 from playwright.sync_api import Page, expect
 
+MAX_SIGNUP_RETRIES = 2
+
 
 @dataclass
 class AccountInfo:
@@ -29,9 +31,14 @@ class RegisterPage:
         self.page.locator('[data-qa="signup-email"]').fill(email)
         self.page.locator('[data-qa="signup-button"]').click()
 
-    def start_signup(self, name: str, email: str) -> None:
+    def start_signup(self, name: str, email: str) -> int:
         self.submit_signup(name, email)
+        retries = 0
+        while retries < MAX_SIGNUP_RETRIES and not self._is_visible("Enter Account Information"):
+            retries += 1
+            self.submit_signup(name, email)
         expect(self.page.get_by_text("Enter Account Information")).to_be_visible()
+        return retries
 
     def assert_signup_error(self, expected_message: str) -> None:
         expect(self.page.get_by_text(expected_message)).to_be_visible()
@@ -54,7 +61,20 @@ class RegisterPage:
         if info.country:
             self.page.locator('[data-qa="country"]').select_option(info.country)
 
+    def submit_account_information(self) -> int:
         self.page.locator('[data-qa="create-account"]').click()
+        retries = 0
+        while retries < MAX_SIGNUP_RETRIES and not self._is_visible("ACCOUNT CREATED!"):
+            retries += 1
+            self.page.locator('[data-qa="create-account"]').click()
+        return retries
+
+    def _is_visible(self, text: str, timeout_ms: int = 10_000) -> bool:
+        try:
+            expect(self.page.get_by_text(text)).to_be_visible(timeout=timeout_ms)
+        except AssertionError:
+            return False
+        return True
 
     def assert_account_created(self, expected_message: str) -> None:
         expect(self.page.get_by_text(expected_message)).to_be_visible()
@@ -62,7 +82,12 @@ class RegisterPage:
     def continue_after_account_created(self) -> None:
         self.page.locator('[data-qa="continue-button"]').click()
 
-    def delete_account(self) -> None:
+    def delete_account(self) -> int:
         self.page.locator('a[href="/delete_account"]').click()
+        retries = 0
+        while retries < MAX_SIGNUP_RETRIES and not self._is_visible("ACCOUNT DELETED!"):
+            retries += 1
+            self.page.reload()
         expect(self.page.get_by_text("ACCOUNT DELETED!")).to_be_visible()
         self.page.locator('[data-qa="continue-button"]').click()
+        return retries

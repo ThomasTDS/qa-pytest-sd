@@ -62,12 +62,16 @@ def assert_logged_out(login_page: LoginPage) -> None:
 
 
 @when("ele se cadastra com um e-mail novo")
-def signup_new_user(register_page: RegisterPage, created_accounts: list[tuple[str, str]]) -> None:
+def signup_new_user(
+    register_page: RegisterPage,
+    created_accounts: list[tuple[str, str]],
+    request: pytest.FixtureRequest,
+) -> None:
     first_name = fake.first_name()
     last_name = fake.last_name()
     unique_email = f"qa-pytest-sd-{uuid.uuid4().hex}@mailinator.com"
     password = fake.password(length=12, special_chars=False)
-    register_page.start_signup(f"{first_name} {last_name}", unique_email)
+    start_retries = register_page.start_signup(f"{first_name} {last_name}", unique_email)
     register_page.fill_account_information(
         AccountInfo(
             password=password,
@@ -82,7 +86,15 @@ def signup_new_user(register_page: RegisterPage, created_accounts: list[tuple[st
             country="Canada",
         )
     )
+    create_retries = register_page.submit_account_information()
     created_accounts.append((unique_email, password))
+    if start_retries or create_retries:
+        note = (
+            "Cadastro: o site não avançou na primeira tentativa "
+            f"(reenvios: início={start_retries}, criação={create_retries}). "
+            "Em execuções com WebKit, interações foram registradas antes de a página estar pronta."
+        )
+        request.node.stash.setdefault(REPORT_NOTES_STASH_KEY, []).append(note)
 
 
 @then(parsers.parse('ele deve ver a mensagem "{expected_message}"'))
@@ -92,11 +104,19 @@ def assert_account_message(register_page: RegisterPage, expected_message: str) -
 
 @then("a conta criada deve poder ser removida")
 def delete_created_account(
-    register_page: RegisterPage, created_accounts: list[tuple[str, str]]
+    register_page: RegisterPage,
+    created_accounts: list[tuple[str, str]],
+    request: pytest.FixtureRequest,
 ) -> None:
     register_page.continue_after_account_created()
-    register_page.delete_account()
+    delete_retries = register_page.delete_account()
     created_accounts.clear()
+    if delete_retries:
+        note = (
+            "Remoção da conta: o site respondeu erro na primeira tentativa e a página "
+            f"foi recarregada {delete_retries} vez(es)."
+        )
+        request.node.stash.setdefault(REPORT_NOTES_STASH_KEY, []).append(note)
 
 
 @when("ele tenta se cadastrar com o e-mail da conta de teste")

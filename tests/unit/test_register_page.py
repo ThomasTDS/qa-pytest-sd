@@ -1,8 +1,9 @@
 from dataclasses import replace
+from unittest.mock import patch
 
 import pytest
 
-from pages.register_page import AccountInfo, RegisterPage
+from pages.register_page import MAX_SIGNUP_RETRIES, AccountInfo, RegisterPage
 from tests.unit.mocks import make_page_mock
 
 pytestmark = pytest.mark.unit
@@ -39,7 +40,7 @@ def test_fill_account_information_fills_required_fields() -> None:
     locators["#days"].select_option.assert_called_once_with("10")
     locators["#months"].select_option.assert_called_once_with("5")
     locators["#years"].select_option.assert_called_once_with("1995")
-    locators['[data-qa="create-account"]'].click.assert_called_once()
+    assert '[data-qa="create-account"]' not in locators
 
 
 def test_fill_account_information_uses_custom_birth_date() -> None:
@@ -78,3 +79,57 @@ def test_submit_signup_fills_name_and_email_and_clicks() -> None:
     locators['[data-qa="signup-name"]'].fill.assert_called_once_with("QA Pytest SD")
     locators['[data-qa="signup-email"]'].fill.assert_called_once_with("user@test.com")
     locators['[data-qa="signup-button"]'].click.assert_called_once()
+
+
+def test_start_signup_does_not_retry_when_next_step_is_visible() -> None:
+    page, locators = make_page_mock()
+
+    with patch("pages.register_page.expect"):
+        retries = RegisterPage(page).start_signup("Ana", "ana@test.com")
+
+    assert retries == 0
+    locators['[data-qa="signup-button"]'].click.assert_called_once()
+
+
+def test_start_signup_resubmits_when_next_step_does_not_appear() -> None:
+    page, locators = make_page_mock()
+
+    with patch("pages.register_page.expect") as expect_mock:
+        expect_mock.return_value.to_be_visible.side_effect = [AssertionError(), None, None]
+        retries = RegisterPage(page).start_signup("Ana", "ana@test.com")
+
+    assert retries == 1
+    assert locators['[data-qa="signup-button"]'].click.call_count == 2
+
+
+def test_submit_account_information_resubmits_until_account_created() -> None:
+    page, locators = make_page_mock()
+
+    with patch("pages.register_page.expect") as expect_mock:
+        expect_mock.return_value.to_be_visible.side_effect = [AssertionError(), None]
+        retries = RegisterPage(page).submit_account_information()
+
+    assert retries == 1
+    assert locators['[data-qa="create-account"]'].click.call_count == 2
+
+
+def test_submit_account_information_gives_up_after_max_retries() -> None:
+    page, locators = make_page_mock()
+
+    with patch("pages.register_page.expect") as expect_mock:
+        expect_mock.return_value.to_be_visible.side_effect = AssertionError()
+        retries = RegisterPage(page).submit_account_information()
+
+    assert retries == MAX_SIGNUP_RETRIES
+    assert locators['[data-qa="create-account"]'].click.call_count == MAX_SIGNUP_RETRIES + 1
+
+
+def test_delete_account_reloads_when_confirmation_does_not_appear() -> None:
+    page, _ = make_page_mock()
+
+    with patch("pages.register_page.expect") as expect_mock:
+        expect_mock.return_value.to_be_visible.side_effect = [AssertionError(), None, None]
+        retries = RegisterPage(page).delete_account()
+
+    assert retries == 1
+    page.reload.assert_called_once()
