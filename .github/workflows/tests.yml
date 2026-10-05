@@ -58,6 +58,7 @@ jobs:
           fail_ci_if_error: false
 
       - name: Testes (Firefox)
+        if: ${{ !cancelled() }}
         run: pytest -n auto --html=reports/report-firefox.html --self-contained-html --alluredir=allure-results --reruns 1
         env:
           HEADLESS: 'true'
@@ -66,6 +67,7 @@ jobs:
           TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
       - name: Testes (WebKit)
+        if: ${{ !cancelled() }}
         run: pytest -n auto --html=reports/report-webkit.html --self-contained-html --alluredir=allure-results --reruns 1
         env:
           HEADLESS: 'true'
