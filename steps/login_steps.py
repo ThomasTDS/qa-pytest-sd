@@ -1,9 +1,11 @@
 import os
 import uuid
 
+import pytest
 from faker import Faker
 from pytest_bdd import given, parsers, then, when
 
+from conftest import REPORT_NOTES_STASH_KEY
 from pages.login_page import LoginPage
 from pages.register_page import AccountInfo, RegisterPage
 
@@ -35,9 +37,23 @@ def assert_error_message(login_page: LoginPage, expected_message: str) -> None:
     login_page.assert_error_message(expected_message)
 
 
+MAX_LOGOUT_RELOADS = 2
+
+
 @when("ele faz logout")
-def logout(login_page: LoginPage) -> None:
+def logout(login_page: LoginPage, request: pytest.FixtureRequest) -> None:
     login_page.logout()
+    reloads = 0
+    while not login_page.is_on_login_page() and reloads < MAX_LOGOUT_RELOADS:
+        reloads += 1
+        login_page.reload()
+    if reloads:
+        note = (
+            "Logout: o site não redirecionou para /login e a página foi recarregada "
+            f"{reloads} vez(es). Em execuções com WebKit, o servidor respondeu erro (HTTP 520) "
+            "para /logout."
+        )
+        request.node.stash.setdefault(REPORT_NOTES_STASH_KEY, []).append(note)
 
 
 @then("ele deve ver que está deslogado")

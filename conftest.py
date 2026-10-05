@@ -27,7 +27,7 @@ load_dotenv()
 
 PAGE_STASH_KEY = pytest.StashKey[Page]()
 CONTEXT_STASH_KEY = pytest.StashKey[BrowserContext]()
-ACCESSIBILITY_NOTES_STASH_KEY = pytest.StashKey[list[str]]()
+REPORT_NOTES_STASH_KEY = pytest.StashKey[list[str]]()
 SUPPORTED_BROWSERS = ("chromium", "firefox", "webkit")
 TRACES_DIR = Path("traces")
 FLAKY_LOG = Path("reports/flaky-tests.tsv")
@@ -153,8 +153,8 @@ def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo[Any]) -> 
             )
 
     if report.when == "call":
-        for note in item.stash.get(ACCESSIBILITY_NOTES_STASH_KEY, []):
+        for note in item.stash.get(REPORT_NOTES_STASH_KEY, []):
             report_extras.append(extras.text(note))
-            allure.attach(note, name="acessibilidade", attachment_type=allure.attachment_type.TEXT)
+            allure.attach(note, name="nota", attachment_type=allure.attachment_type.TEXT)
 
     report.extras = report_extras
