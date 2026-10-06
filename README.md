@@ -256,6 +256,24 @@ pre-commit run --all-files
 - Massa de dados dinâmica: nome, empresa, endereço e telefone usados em cadastro (UI e API) são gerados a cada execução com [Faker](https://faker.readthedocs.io/) (locale `pt_BR`), em vez de valores fixos.
 - Acessibilidade: páginas-chave (login, produtos) são varridas com [axe-core](https://github.com/dequelabs/axe-core) via [axe-playwright-python](https://pypi.org/project/axe-playwright-python/), verificando violações de impacto `critical`/`serious`. É QA passivo — violações encontradas viram nota no relatório HTML, sem quebrar o teste.
 
+### Instabilidade do site de terceiros
+
+O site testado (automationexercise.com) não é controlado por este projeto, e às vezes responde com erros de servidor (HTTP 5xx) para algumas requisições, principalmente no WebKit. Nesses casos, a página fica presa numa tela de erro e o cenário falharia mesmo com o código correto.
+
+Para não mascarar isso com falhas espúrias, algumas etapas repetem a ação com limite fixo (2 tentativas):
+
+- **Logout**: se a página não redireciona para `/login`, é recarregada.
+- **Cadastro e remoção de conta**: se o formulário não avança ou a confirmação não aparece, a etapa é repetida.
+- **Produtos e busca**: se a página de produtos ou de resultados não carrega, é recarregada.
+- **Adicionar ao carrinho**: o clique é repetido apenas quando o site responde 5xx. Como o item não foi adicionado nesse caso, repetir não duplica nada.
+
+Cada repetição aparece como **nota no relatório HTML e no Allure**, no próprio cenário. Assim, um cenário que passou só depois de repetir continua visível para quem analisa a execução.
+
+Os testes que precisaram de reexecução do pytest-rerunfailures (`--reruns 1`) também são registrados em `reports/flaky-tests.tsv`, e o CI publica um resumo com esses casos.
+
+Repetir uma etapa não corrige o site. Se a instabilidade aumentar, o relatório mostra quais etapas estão repetindo com mais frequência.
+
+
 ---
 
 ### CI/CD
