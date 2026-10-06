@@ -9,7 +9,7 @@ class ProductsPage:
 
     def goto(self) -> None:
         base_url = os.getenv("BASE_URL", "https://automationexercise.com/")
-        self.page.goto(base_url + "products")
+        self.page.goto(base_url + "products", wait_until="domcontentloaded")
 
     def search(self, term: str) -> None:
         self.page.locator("#search_product").fill(term)

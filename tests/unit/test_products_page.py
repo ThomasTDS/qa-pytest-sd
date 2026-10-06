@@ -13,7 +13,9 @@ def test_goto_uses_default_base_url_when_env_not_set() -> None:
 
     ProductsPage(page).goto()
 
-    page.goto.assert_called_once_with("https://automationexercise.com/products")
+    page.goto.assert_called_once_with(
+        "https://automationexercise.com/products", wait_until="domcontentloaded"
+    )
 
 
 def test_goto_uses_base_url_from_env(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -22,7 +24,9 @@ def test_goto_uses_base_url_from_env(monkeypatch: pytest.MonkeyPatch) -> None:
 
     ProductsPage(page).goto()
 
-    page.goto.assert_called_once_with("https://staging.example.com/products")
+    page.goto.assert_called_once_with(
+        "https://staging.example.com/products", wait_until="domcontentloaded"
+    )
 
 
 def test_search_fills_term_and_submits() -> None:

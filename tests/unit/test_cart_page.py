@@ -11,7 +11,9 @@ def test_goto_uses_default_base_url_when_env_not_set() -> None:
 
     CartPage(page).goto()
 
-    page.goto.assert_called_once_with("https://automationexercise.com/view_cart")
+    page.goto.assert_called_once_with(
+        "https://automationexercise.com/view_cart", wait_until="domcontentloaded"
+    )
 
 
 def test_goto_uses_base_url_from_env(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -20,7 +22,9 @@ def test_goto_uses_base_url_from_env(monkeypatch: pytest.MonkeyPatch) -> None:
 
     CartPage(page).goto()
 
-    page.goto.assert_called_once_with("https://staging.example.com/view_cart")
+    page.goto.assert_called_once_with(
+        "https://staging.example.com/view_cart", wait_until="domcontentloaded"
+    )
 
 
 def test_remove_product_filters_by_name_and_clicks_delete() -> None:

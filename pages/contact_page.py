@@ -9,11 +9,11 @@ class ContactPage:
 
     def goto(self) -> None:
         base_url = os.getenv("BASE_URL", "https://automationexercise.com/")
-        self.page.goto(base_url + "contact_us")
+        self.page.goto(base_url + "contact_us", wait_until="domcontentloaded")
 
     def goto_home(self) -> None:
         base_url = os.getenv("BASE_URL", "https://automationexercise.com/")
-        self.page.goto(base_url)
+        self.page.goto(base_url, wait_until="domcontentloaded")
 
     def submit_form(self, name: str, email: str, subject: str, message: str) -> None:
         self.page.once("dialog", lambda dialog: dialog.accept())
