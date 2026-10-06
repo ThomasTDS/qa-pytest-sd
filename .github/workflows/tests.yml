@@ -100,6 +100,13 @@ jobs:
       - uses: actions/upload-artifact@v7
         if: always()
         with:
+          name: playwright-traces
+          path: traces/*.zip
+          if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
           name: pytest-reports
           path: reports/report-*.html
 

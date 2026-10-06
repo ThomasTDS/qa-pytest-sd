@@ -126,7 +126,7 @@ def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo[Any]) -> 
     if report.when == "call":
         context = item.stash.get(CONTEXT_STASH_KEY, None)
         if context is not None:
-            if report.failed:
+            if report.outcome in ("failed", "rerun"):
                 TRACES_DIR.mkdir(parents=True, exist_ok=True)
                 browser_name = os.getenv("BROWSER", "chromium")
                 safe_name = re.sub(r"[^a-zA-Z0-9_-]+", "-", item.name)
