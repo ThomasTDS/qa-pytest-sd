@@ -3,15 +3,21 @@ import os
 from playwright.sync_api import Page, expect
 
 MAX_ADD_TO_CART_RETRIES = 2
+MAX_PAGE_RETRIES = 2
 
 
 class ProductsPage:
     def __init__(self, page: Page) -> None:
         self.page = page
 
-    def goto(self) -> None:
+    def goto(self) -> int:
         base_url = os.getenv("BASE_URL", "https://automationexercise.com/")
-        self.page.goto(base_url + "products", wait_until="domcontentloaded")
+        response = self.page.goto(base_url + "products", wait_until="domcontentloaded")
+        retries = 0
+        while response is not None and response.status >= 500 and retries < MAX_PAGE_RETRIES:
+            retries += 1
+            response = self.page.reload(wait_until="domcontentloaded")
+        return retries
 
     def search(self, term: str) -> None:
         self.page.locator("#search_product").fill(term)
