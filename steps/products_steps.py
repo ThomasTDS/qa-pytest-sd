@@ -1,7 +1,19 @@
+import pytest
 from pytest_bdd import given, parsers, then, when
 
+from conftest import REPORT_NOTES_STASH_KEY
 from pages.cart_page import CartPage
 from pages.products_page import ProductsPage
+
+
+def record_add_to_cart_retries(request: pytest.FixtureRequest, product: str, retries: int) -> None:
+    if retries:
+        note = (
+            f"Carrinho: o site respondeu erro (HTTP 5xx) ao adicionar '{product}' e o clique "
+            f"foi repetido {retries} vez(es). O erro não adicionou o item, então nada foi "
+            "duplicado."
+        )
+        request.node.stash.setdefault(REPORT_NOTES_STASH_KEY, []).append(note)
 
 
 @given("que o usuário está na página de produtos")
@@ -21,14 +33,20 @@ def assert_search_results_visible(products_page: ProductsPage) -> None:
 
 
 @when(parsers.parse('ele adiciona os produtos "{product1}" e "{product2}" ao carrinho'))
-def add_two_products_to_cart(products_page: ProductsPage, product1: str, product2: str) -> None:
-    products_page.add_product_to_cart(product1)
-    products_page.add_product_to_cart(product2)
+def add_two_products_to_cart(
+    products_page: ProductsPage, product1: str, product2: str, request: pytest.FixtureRequest
+) -> None:
+    record_add_to_cart_retries(request, product1, products_page.add_product_to_cart(product1))
+    record_add_to_cart_retries(request, product2, products_page.add_product_to_cart(product2))
 
 
 @when(parsers.parse('ele adiciona o produto "{product_name}" ao carrinho'))
-def add_product_to_cart(products_page: ProductsPage, product_name: str) -> None:
-    products_page.add_product_to_cart(product_name)
+def add_product_to_cart(
+    products_page: ProductsPage, product_name: str, request: pytest.FixtureRequest
+) -> None:
+    record_add_to_cart_retries(
+        request, product_name, products_page.add_product_to_cart(product_name)
+    )
 
 
 @when("ele acessa o carrinho")

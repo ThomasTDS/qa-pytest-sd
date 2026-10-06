@@ -1,8 +1,8 @@
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
-from pages.products_page import ProductsPage
+from pages.products_page import MAX_ADD_TO_CART_RETRIES, ProductsPage
 from tests.unit.mocks import make_page_mock
 
 pytestmark = pytest.mark.unit
@@ -39,7 +39,7 @@ def test_search_fills_term_and_submits() -> None:
 
 
 def test_add_product_to_cart_filters_by_name_and_closes_modal() -> None:
-    page, locators = make_page_mock()
+    page, locators = _page_with_response_status(200)
 
     with patch("pages.products_page.expect"):
         ProductsPage(page).add_product_to_cart("Blue Top")
@@ -55,7 +55,7 @@ def test_add_product_to_cart_filters_by_name_and_closes_modal() -> None:
 
 
 def test_add_product_to_cart_waits_for_modal_before_closing() -> None:
-    page, locators = make_page_mock()
+    page, locators = _page_with_response_status(200)
 
     with patch("pages.products_page.expect") as expect_mock:
         ProductsPage(page).add_product_to_cart("Blue Top")
@@ -64,3 +64,32 @@ def test_add_product_to_cart_waits_for_modal_before_closing() -> None:
     expect_mock.assert_called_once_with(close_button)
     expect_mock.return_value.to_be_visible.assert_called_once()
     close_button.click.assert_called_once()
+
+
+def _page_with_response_status(status: int) -> tuple[MagicMock, dict[str, MagicMock]]:
+    page, locators = make_page_mock()
+    page.expect_response.return_value.__enter__.return_value.value.status = status
+    return page, locators
+
+
+def test_add_product_to_cart_does_not_retry_on_success() -> None:
+    page, locators = _page_with_response_status(200)
+
+    with patch("pages.products_page.expect"):
+        retries = ProductsPage(page).add_product_to_cart("Blue Top")
+
+    assert retries == 0
+    locators[
+        ".product-image-wrapper"
+    ].filter.return_value.locator.return_value.click.assert_called_once()
+
+
+def test_add_product_to_cart_retries_on_server_error_then_stops() -> None:
+    page, locators = _page_with_response_status(503)
+
+    with patch("pages.products_page.expect"):
+        retries = ProductsPage(page).add_product_to_cart("Blue Top")
+
+    assert retries == MAX_ADD_TO_CART_RETRIES
+    add_button = locators[".product-image-wrapper"].filter.return_value.locator.return_value
+    assert add_button.click.call_count == MAX_ADD_TO_CART_RETRIES + 1
