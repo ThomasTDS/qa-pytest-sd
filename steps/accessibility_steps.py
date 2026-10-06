@@ -1,8 +1,8 @@
 import pytest
 from pytest_bdd import then
 
-from conftest import REPORT_NOTES_STASH_KEY
 from pages.accessibility_page import AccessibilityPage
+from steps.report import add_report_note
 
 
 @then("a página não deve ter violações críticas de acessibilidade")
@@ -21,4 +21,4 @@ def assert_no_critical_accessibility_violations(
         "Violações de acessibilidade observadas na aplicação sob teste "
         f"(QA passivo, não bloqueia o teste):\n{details}"
     )
-    request.node.stash.setdefault(REPORT_NOTES_STASH_KEY, []).append(note)
+    add_report_note(request, note)

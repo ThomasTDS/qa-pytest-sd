@@ -2,7 +2,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from pages.products_page import MAX_ADD_TO_CART_RETRIES, MAX_PAGE_RETRIES, ProductsPage
+from pages.products_page import ProductsPage
+from pages.retry import MAX_RETRIES
 from tests.unit.mocks import make_page_mock
 
 pytestmark = pytest.mark.unit
@@ -34,7 +35,7 @@ def test_goto_uses_base_url_from_env(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_search_fills_term_and_submits() -> None:
     page, locators = make_page_mock()
 
-    with patch("pages.products_page.expect"):
+    with patch("pages.retry.expect"):
         ProductsPage(page).search("Top")
 
     locators["#search_product"].fill.assert_called_once_with("Top")
@@ -44,12 +45,12 @@ def test_search_fills_term_and_submits() -> None:
 def test_search_reloads_when_results_do_not_appear_then_stops() -> None:
     page, _ = make_page_mock()
 
-    with patch("pages.products_page.expect") as expect_mock:
+    with patch("pages.retry.expect") as expect_mock:
         expect_mock.return_value.to_be_visible.side_effect = AssertionError()
         retries = ProductsPage(page).search("Top")
 
-    assert retries == MAX_PAGE_RETRIES
-    assert page.reload.call_count == MAX_PAGE_RETRIES
+    assert retries == MAX_RETRIES
+    assert page.reload.call_count == MAX_RETRIES
 
 
 def test_add_product_to_cart_filters_by_name_and_closes_modal() -> None:
@@ -104,9 +105,9 @@ def test_add_product_to_cart_retries_on_server_error_then_stops() -> None:
     with patch("pages.products_page.expect"):
         retries = ProductsPage(page).add_product_to_cart("Blue Top")
 
-    assert retries == MAX_ADD_TO_CART_RETRIES
+    assert retries == MAX_RETRIES
     add_button = locators[".product-image-wrapper"].filter.return_value.locator.return_value
-    assert add_button.click.call_count == MAX_ADD_TO_CART_RETRIES + 1
+    assert add_button.click.call_count == MAX_RETRIES + 1
 
 
 def test_goto_reloads_on_server_error_then_stops() -> None:
@@ -117,8 +118,8 @@ def test_goto_reloads_on_server_error_then_stops() -> None:
 
     retries = ProductsPage(page).goto()
 
-    assert retries == MAX_PAGE_RETRIES
-    assert page.reload.call_count == MAX_PAGE_RETRIES
+    assert retries == MAX_RETRIES
+    assert page.reload.call_count == MAX_RETRIES
 
 
 def test_goto_does_not_reload_on_success() -> None:
