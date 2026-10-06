@@ -18,8 +18,14 @@ def record_add_to_cart_retries(request: pytest.FixtureRequest, product: str, ret
 
 @given("que o usuário está na página de produtos")
 @when("que o usuário está na página de produtos")
-def go_to_products(products_page: ProductsPage) -> None:
-    products_page.goto()
+def go_to_products(products_page: ProductsPage, request: pytest.FixtureRequest) -> None:
+    retries = products_page.goto()
+    if retries:
+        note = (
+            f"Produtos: o site respondeu erro (HTTP 5xx) ao abrir a página e ela foi recarregada "
+            f"{retries} vez(es)."
+        )
+        request.node.stash.setdefault(REPORT_NOTES_STASH_KEY, []).append(note)
 
 
 @when(parsers.parse('ele busca por "{term}"'))
