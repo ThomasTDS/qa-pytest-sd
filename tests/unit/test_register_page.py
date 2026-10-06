@@ -3,7 +3,8 @@ from unittest.mock import patch
 
 import pytest
 
-from pages.register_page import MAX_SIGNUP_RETRIES, AccountInfo, RegisterPage
+from pages.register_page import AccountInfo, RegisterPage
+from pages.retry import MAX_RETRIES
 from tests.unit.mocks import make_page_mock
 
 pytestmark = pytest.mark.unit
@@ -84,7 +85,7 @@ def test_submit_signup_fills_name_and_email_and_clicks() -> None:
 def test_start_signup_does_not_retry_when_next_step_is_visible() -> None:
     page, locators = make_page_mock()
 
-    with patch("pages.register_page.expect"):
+    with patch("pages.retry.expect"):
         retries = RegisterPage(page).start_signup("Ana", "ana@test.com")
 
     assert retries == 0
@@ -94,7 +95,7 @@ def test_start_signup_does_not_retry_when_next_step_is_visible() -> None:
 def test_start_signup_resubmits_when_next_step_does_not_appear() -> None:
     page, locators = make_page_mock()
 
-    with patch("pages.register_page.expect") as expect_mock:
+    with patch("pages.retry.expect") as expect_mock:
         expect_mock.return_value.to_be_visible.side_effect = [AssertionError(), None, None]
         retries = RegisterPage(page).start_signup("Ana", "ana@test.com")
 
@@ -105,7 +106,7 @@ def test_start_signup_resubmits_when_next_step_does_not_appear() -> None:
 def test_submit_account_information_resubmits_until_account_created() -> None:
     page, locators = make_page_mock()
 
-    with patch("pages.register_page.expect") as expect_mock:
+    with patch("pages.retry.expect") as expect_mock:
         expect_mock.return_value.to_be_visible.side_effect = [AssertionError(), None]
         retries = RegisterPage(page).submit_account_information()
 
@@ -116,18 +117,18 @@ def test_submit_account_information_resubmits_until_account_created() -> None:
 def test_submit_account_information_gives_up_after_max_retries() -> None:
     page, locators = make_page_mock()
 
-    with patch("pages.register_page.expect") as expect_mock:
+    with patch("pages.retry.expect") as expect_mock:
         expect_mock.return_value.to_be_visible.side_effect = AssertionError()
         retries = RegisterPage(page).submit_account_information()
 
-    assert retries == MAX_SIGNUP_RETRIES
-    assert locators['[data-qa="create-account"]'].click.call_count == MAX_SIGNUP_RETRIES + 1
+    assert retries == MAX_RETRIES
+    assert locators['[data-qa="create-account"]'].click.call_count == MAX_RETRIES + 1
 
 
 def test_delete_account_reloads_when_confirmation_does_not_appear() -> None:
     page, _ = make_page_mock()
 
-    with patch("pages.register_page.expect") as expect_mock:
+    with patch("pages.retry.expect") as expect_mock:
         expect_mock.return_value.to_be_visible.side_effect = [AssertionError(), None, None]
         retries = RegisterPage(page).delete_account()
 

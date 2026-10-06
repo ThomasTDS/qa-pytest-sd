@@ -5,9 +5,10 @@ import pytest
 from faker import Faker
 from pytest_bdd import given, parsers, then, when
 
-from conftest import REPORT_NOTES_STASH_KEY
 from pages.login_page import LoginPage
 from pages.register_page import AccountInfo, RegisterPage
+from pages.retry import retry_while_failing
+from steps.report import add_report_note
 
 fake = Faker("pt_BR")
 
@@ -37,23 +38,20 @@ def assert_error_message(login_page: LoginPage, expected_message: str) -> None:
     login_page.assert_error_message(expected_message)
 
 
-MAX_LOGOUT_RELOADS = 2
-
-
 @when("ele faz logout")
 def logout(login_page: LoginPage, request: pytest.FixtureRequest) -> None:
-    login_page.logout()
-    reloads = 0
-    while not login_page.is_on_login_page() and reloads < MAX_LOGOUT_RELOADS:
-        reloads += 1
-        login_page.reload()
+    _, reloads = retry_while_failing(
+        first=login_page.logout,
+        again=login_page.reload,
+        failed=lambda _: not login_page.is_on_login_page(),
+    )
     if reloads:
-        note = (
+        add_report_note(
+            request,
             "Logout: o site não redirecionou para /login e a página foi recarregada "
             f"{reloads} vez(es). Em execuções com WebKit, o servidor respondeu erro (HTTP 520) "
-            "para /logout."
+            "para /logout.",
         )
-        request.node.stash.setdefault(REPORT_NOTES_STASH_KEY, []).append(note)
 
 
 @then("ele deve ver que está deslogado")
@@ -89,12 +87,12 @@ def signup_new_user(
     create_retries = register_page.submit_account_information()
     created_accounts.append((unique_email, password))
     if start_retries or create_retries:
-        note = (
+        add_report_note(
+            request,
             "Cadastro: o site não avançou na primeira tentativa "
             f"(reenvios: início={start_retries}, criação={create_retries}). "
-            "Em execuções com WebKit, interações foram registradas antes de a página estar pronta."
+            "Em execuções com WebKit, interações foram registradas antes de a página estar pronta.",
         )
-        request.node.stash.setdefault(REPORT_NOTES_STASH_KEY, []).append(note)
 
 
 @then(parsers.parse('ele deve ver a mensagem "{expected_message}"'))
@@ -112,11 +110,11 @@ def delete_created_account(
     delete_retries = register_page.delete_account()
     created_accounts.clear()
     if delete_retries:
-        note = (
+        add_report_note(
+            request,
             "Remoção da conta: o site respondeu erro na primeira tentativa e a página "
-            f"foi recarregada {delete_retries} vez(es)."
+            f"foi recarregada {delete_retries} vez(es).",
         )
-        request.node.stash.setdefault(REPORT_NOTES_STASH_KEY, []).append(note)
 
 
 @when("ele tenta se cadastrar com o e-mail da conta de teste")

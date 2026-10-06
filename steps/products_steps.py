@@ -1,19 +1,19 @@
 import pytest
 from pytest_bdd import given, parsers, then, when
 
-from conftest import REPORT_NOTES_STASH_KEY
 from pages.cart_page import CartPage
 from pages.products_page import ProductsPage
+from steps.report import add_report_note
 
 
 def record_add_to_cart_retries(request: pytest.FixtureRequest, product: str, retries: int) -> None:
     if retries:
-        note = (
+        add_report_note(
+            request,
             f"Carrinho: o site respondeu erro (HTTP 5xx) ao adicionar '{product}' e o clique "
             f"foi repetido {retries} vez(es). O erro não adicionou o item, então nada foi "
-            "duplicado."
+            "duplicado.",
         )
-        request.node.stash.setdefault(REPORT_NOTES_STASH_KEY, []).append(note)
 
 
 @given("que o usuário está na página de produtos")
@@ -21,22 +21,22 @@ def record_add_to_cart_retries(request: pytest.FixtureRequest, product: str, ret
 def go_to_products(products_page: ProductsPage, request: pytest.FixtureRequest) -> None:
     retries = products_page.goto()
     if retries:
-        note = (
-            f"Produtos: o site respondeu erro (HTTP 5xx) ao abrir a página e ela foi recarregada "
-            f"{retries} vez(es)."
+        add_report_note(
+            request,
+            "Produtos: o site respondeu erro (HTTP 5xx) ao abrir a página e ela foi recarregada "
+            f"{retries} vez(es).",
         )
-        request.node.stash.setdefault(REPORT_NOTES_STASH_KEY, []).append(note)
 
 
 @when(parsers.parse('ele busca por "{term}"'))
 def search_products(products_page: ProductsPage, term: str, request: pytest.FixtureRequest) -> None:
     retries = products_page.search(term)
     if retries:
-        note = (
+        add_report_note(
+            request,
             f"Busca por '{term}': o site respondeu erro (HTTP 5xx) e a página de resultados "
-            f"foi recarregada {retries} vez(es)."
+            f"foi recarregada {retries} vez(es).",
         )
-        request.node.stash.setdefault(REPORT_NOTES_STASH_KEY, []).append(note)
 
 
 @then("ele deve ver resultados da busca")

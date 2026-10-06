@@ -3,7 +3,8 @@ from unittest.mock import MagicMock
 import pytest
 
 from conftest import REPORT_NOTES_STASH_KEY
-from steps.login_steps import MAX_LOGOUT_RELOADS, logout
+from pages.retry import MAX_RETRIES
+from steps.login_steps import logout
 
 pytestmark = pytest.mark.unit
 
@@ -46,5 +47,5 @@ def test_logout_gives_up_after_max_reloads() -> None:
 
     logout(login_page, request)
 
-    assert login_page.reload.call_count == MAX_LOGOUT_RELOADS
-    assert f"{MAX_LOGOUT_RELOADS} vez(es)" in request.node.stash[REPORT_NOTES_STASH_KEY][0]
+    assert login_page.reload.call_count == MAX_RETRIES
+    assert f"{MAX_RETRIES} vez(es)" in request.node.stash[REPORT_NOTES_STASH_KEY][0]

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from playwright.sync_api import Page, expect
 
-MAX_SIGNUP_RETRIES = 2
+from pages.retry import assert_visible, is_visible, retry_while_failing
 
 
 @dataclass
@@ -32,12 +32,12 @@ class RegisterPage:
         self.page.locator('[data-qa="signup-button"]').click()
 
     def start_signup(self, name: str, email: str) -> int:
-        self.submit_signup(name, email)
-        retries = 0
-        while retries < MAX_SIGNUP_RETRIES and not self._is_visible("Enter Account Information"):
-            retries += 1
-            self.submit_signup(name, email)
-        expect(self.page.get_by_text("Enter Account Information")).to_be_visible()
+        _, retries = retry_while_failing(
+            first=lambda: self.submit_signup(name, email),
+            again=lambda: self.submit_signup(name, email),
+            failed=lambda _: not is_visible(self.page, "Enter Account Information"),
+        )
+        assert_visible(self.page, "Enter Account Information")
         return retries
 
     def assert_signup_error(self, expected_message: str) -> None:
@@ -62,19 +62,15 @@ class RegisterPage:
             self.page.locator('[data-qa="country"]').select_option(info.country)
 
     def submit_account_information(self) -> int:
-        self.page.locator('[data-qa="create-account"]').click()
-        retries = 0
-        while retries < MAX_SIGNUP_RETRIES and not self._is_visible("ACCOUNT CREATED!"):
-            retries += 1
+        def click_create() -> None:
             self.page.locator('[data-qa="create-account"]').click()
-        return retries
 
-    def _is_visible(self, text: str, timeout_ms: int = 10_000) -> bool:
-        try:
-            expect(self.page.get_by_text(text)).to_be_visible(timeout=timeout_ms)
-        except AssertionError:
-            return False
-        return True
+        _, retries = retry_while_failing(
+            first=click_create,
+            again=click_create,
+            failed=lambda _: not is_visible(self.page, "ACCOUNT CREATED!"),
+        )
+        return retries
 
     def assert_account_created(self, expected_message: str) -> None:
         expect(self.page.get_by_text(expected_message)).to_be_visible()
@@ -83,11 +79,14 @@ class RegisterPage:
         self.page.locator('[data-qa="continue-button"]').click()
 
     def delete_account(self) -> int:
-        self.page.locator('a[href="/delete_account"]').click()
-        retries = 0
-        while retries < MAX_SIGNUP_RETRIES and not self._is_visible("ACCOUNT DELETED!"):
-            retries += 1
-            self.page.reload()
-        expect(self.page.get_by_text("ACCOUNT DELETED!")).to_be_visible()
+        def click_delete_link() -> None:
+            self.page.locator('a[href="/delete_account"]').click()
+
+        _, retries = retry_while_failing(
+            first=click_delete_link,
+            again=lambda: self.page.reload(),
+            failed=lambda _: not is_visible(self.page, "ACCOUNT DELETED!"),
+        )
+        assert_visible(self.page, "ACCOUNT DELETED!")
         self.page.locator('[data-qa="continue-button"]').click()
         return retries
