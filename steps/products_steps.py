@@ -29,8 +29,14 @@ def go_to_products(products_page: ProductsPage, request: pytest.FixtureRequest) 
 
 
 @when(parsers.parse('ele busca por "{term}"'))
-def search_products(products_page: ProductsPage, term: str) -> None:
-    products_page.search(term)
+def search_products(products_page: ProductsPage, term: str, request: pytest.FixtureRequest) -> None:
+    retries = products_page.search(term)
+    if retries:
+        note = (
+            f"Busca por '{term}': o site respondeu erro (HTTP 5xx) e a página de resultados "
+            f"foi recarregada {retries} vez(es)."
+        )
+        request.node.stash.setdefault(REPORT_NOTES_STASH_KEY, []).append(note)
 
 
 @then("ele deve ver resultados da busca")

@@ -19,9 +19,21 @@ class ProductsPage:
             response = self.page.reload(wait_until="domcontentloaded")
         return retries
 
-    def search(self, term: str) -> None:
+    def search(self, term: str) -> int:
         self.page.locator("#search_product").fill(term)
         self.page.locator("#submit_search").click()
+        retries = 0
+        while retries < MAX_PAGE_RETRIES and not self._is_visible("Searched Products"):
+            retries += 1
+            self.page.reload(wait_until="domcontentloaded")
+        return retries
+
+    def _is_visible(self, text: str, timeout_ms: int = 10_000) -> bool:
+        try:
+            expect(self.page.get_by_text(text)).to_be_visible(timeout=timeout_ms)
+        except AssertionError:
+            return False
+        return True
 
     def assert_search_results_visible(self) -> None:
         expect(self.page.get_by_text("Searched Products")).to_be_visible()
