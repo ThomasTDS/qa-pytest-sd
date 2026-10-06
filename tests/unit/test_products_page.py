@@ -34,10 +34,22 @@ def test_goto_uses_base_url_from_env(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_search_fills_term_and_submits() -> None:
     page, locators = make_page_mock()
 
-    ProductsPage(page).search("Top")
+    with patch("pages.products_page.expect"):
+        ProductsPage(page).search("Top")
 
     locators["#search_product"].fill.assert_called_once_with("Top")
     locators["#submit_search"].click.assert_called_once()
+
+
+def test_search_reloads_when_results_do_not_appear_then_stops() -> None:
+    page, _ = make_page_mock()
+
+    with patch("pages.products_page.expect") as expect_mock:
+        expect_mock.return_value.to_be_visible.side_effect = AssertionError()
+        retries = ProductsPage(page).search("Top")
+
+    assert retries == MAX_PAGE_RETRIES
+    assert page.reload.call_count == MAX_PAGE_RETRIES
 
 
 def test_add_product_to_cart_filters_by_name_and_closes_modal() -> None:
