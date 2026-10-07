@@ -135,6 +135,8 @@ BROWSER=firefox pytest
 
 Valores aceitos: `chromium` (padrão), `firefox`, `webkit`.
 
+Os testes de API (`@api`) não usam navegador, então não dependem de `BROWSER`. No CI, eles rodam só no Chromium; para pulá-los localmente, use `pytest -m "not api"`.
+
 ### Rodar em paralelo
 
 Os cenários são independentes entre si (cada um abre seu próprio navegador), então rodam bem em paralelo via **pytest-xdist**. O CI já roda assim (`-n auto`, que usa todos os cores disponíveis no runner):

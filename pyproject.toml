@@ -38,6 +38,7 @@ markers = [
     "TC-027: consulta de detalhes do usuário de teste via API",
     "smoke: cenário crítico de ponta a ponta",
     "unit: testes unitários de page objects, sem navegador real",
+    "api: testes da API pública, sem navegador (rodam só no Chromium no CI)",
 ]
 
 [tool.coverage.run]

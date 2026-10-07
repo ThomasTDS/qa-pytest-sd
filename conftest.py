@@ -10,7 +10,7 @@ from typing import Any
 import allure
 import pytest
 from dotenv import load_dotenv
-from playwright.sync_api import BrowserContext, Page, sync_playwright
+from playwright.sync_api import APIRequestContext, BrowserContext, Page, Playwright, sync_playwright
 from pytest_html import extras
 
 from pages.accessibility_page import AccessibilityPage
@@ -34,21 +34,26 @@ FLAKY_LOG = Path("reports/flaky-tests.tsv")
 
 
 @pytest.fixture
-def page(request: pytest.FixtureRequest) -> Generator[Page, None, None]:
+def playwright() -> Generator[Playwright, None, None]:
+    with sync_playwright() as playwright_instance:
+        yield playwright_instance
+
+
+@pytest.fixture
+def page(request: pytest.FixtureRequest, playwright: Playwright) -> Generator[Page, None, None]:
     browser_name = os.getenv("BROWSER", "chromium")
     if browser_name not in SUPPORTED_BROWSERS:
         raise ValueError(f"BROWSER inválido: {browser_name!r}. Use um de {SUPPORTED_BROWSERS}.")
     headless = os.getenv("HEADLESS", "false").lower() == "true"
-    with sync_playwright() as playwright:
-        browser_type = getattr(playwright, browser_name)
-        browser = browser_type.launch(headless=headless)
-        context = browser.new_context()
-        context.tracing.start(screenshots=True, snapshots=True, sources=True)
-        pg = context.new_page()
-        request.node.stash[PAGE_STASH_KEY] = pg
-        request.node.stash[CONTEXT_STASH_KEY] = context
-        yield pg
-        browser.close()
+    browser_type = getattr(playwright, browser_name)
+    browser = browser_type.launch(headless=headless)
+    context = browser.new_context()
+    context.tracing.start(screenshots=True, snapshots=True, sources=True)
+    pg = context.new_page()
+    request.node.stash[PAGE_STASH_KEY] = pg
+    request.node.stash[CONTEXT_STASH_KEY] = context
+    yield pg
+    browser.close()
 
 
 @pytest.fixture
@@ -87,8 +92,15 @@ def security_page(page: Page) -> SecurityPage:
 
 
 @pytest.fixture
-def api_page(page: Page) -> ApiPage:
-    return ApiPage(page)
+def api_request(playwright: Playwright) -> Generator[APIRequestContext, None, None]:
+    request_context = playwright.request.new_context()
+    yield request_context
+    request_context.dispose()
+
+
+@pytest.fixture
+def api_page(api_request: APIRequestContext) -> ApiPage:
+    return ApiPage(api_request)
 
 
 @pytest.fixture
@@ -97,10 +109,12 @@ def accessibility_page(page: Page) -> AccessibilityPage:
 
 
 @pytest.fixture
-def created_accounts(page: Page) -> Generator[list[tuple[str, str]], None, None]:
+def created_accounts(
+    api_request: APIRequestContext,
+) -> Generator[list[tuple[str, str]], None, None]:
     accounts: list[tuple[str, str]] = []
     yield accounts
-    api_page = ApiPage(page)
+    api_page = ApiPage(api_request)
     for email, password in accounts:
         if not api_page.try_delete_account(email, password):
             warnings.warn(f"conta de teste não removida, remover manualmente: {email}")

@@ -1,3 +1,4 @@
+@api
 Feature: Verificação da API pública do Automation Exercise
 
   @TC-018
