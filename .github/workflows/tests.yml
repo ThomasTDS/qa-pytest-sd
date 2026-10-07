@@ -59,7 +59,7 @@ jobs:
 
       - name: Testes (Firefox)
         if: ${{ !cancelled() }}
-        run: pytest -n auto --html=reports/report-firefox.html --self-contained-html --alluredir=allure-results --reruns 1
+        run: pytest -n auto -m "not api" --html=reports/report-firefox.html --self-contained-html --alluredir=allure-results --reruns 1
         env:
           HEADLESS: 'true'
           BROWSER: firefox
@@ -68,7 +68,7 @@ jobs:
 
       - name: Testes (WebKit)
         if: ${{ !cancelled() }}
-        run: pytest -n auto --html=reports/report-webkit.html --self-contained-html --alluredir=allure-results --reruns 1
+        run: pytest -n auto -m "not api" --html=reports/report-webkit.html --self-contained-html --alluredir=allure-results --reruns 1
         env:
           HEADLESS: 'true'
           BROWSER: webkit

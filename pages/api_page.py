@@ -2,27 +2,27 @@ import os
 import uuid
 
 from faker import Faker
-from playwright.sync_api import APIResponse, Page
+from playwright.sync_api import APIRequestContext, APIResponse
 
 TEST_ACCOUNT_PASSWORD = "SenhaDeTeste123"
 fake = Faker("pt_BR")
 
 
 class ApiPage:
-    def __init__(self, page: Page) -> None:
-        self.page = page
+    def __init__(self, request: APIRequestContext) -> None:
+        self.request = request
 
     def _get_products_list(self) -> APIResponse:
         base_url = os.getenv("BASE_URL", "https://automationexercise.com/")
-        return self.page.request.get(base_url + "api/productsList")
+        return self.request.get(base_url + "api/productsList")
 
     def _get_brands_list(self) -> APIResponse:
         base_url = os.getenv("BASE_URL", "https://automationexercise.com/")
-        return self.page.request.get(base_url + "api/brandsList")
+        return self.request.get(base_url + "api/brandsList")
 
     def _search_products(self, term: str) -> APIResponse:
         base_url = os.getenv("BASE_URL", "https://automationexercise.com/")
-        return self.page.request.post(base_url + "api/searchProduct", form={"search_product": term})
+        return self.request.post(base_url + "api/searchProduct", form={"search_product": term})
 
     def assert_products_list_contains(self, product_name: str) -> None:
         response = self._get_products_list()
@@ -48,7 +48,7 @@ class ApiPage:
 
     def assert_products_list_rejects_post(self) -> None:
         base_url = os.getenv("BASE_URL", "https://automationexercise.com/")
-        response = self.page.request.post(base_url + "api/productsList")
+        response = self.request.post(base_url + "api/productsList")
         assert response.status == 200
         body = response.json()
         assert body["responseCode"] == 405
@@ -64,7 +64,7 @@ class ApiPage:
 
     def assert_verify_login_succeeds(self, email: str, password: str) -> None:
         base_url = os.getenv("BASE_URL", "https://automationexercise.com/")
-        response = self.page.request.post(
+        response = self.request.post(
             base_url + "api/verifyLogin", form={"email": email, "password": password}
         )
         assert response.status == 200
@@ -74,7 +74,7 @@ class ApiPage:
 
     def assert_verify_login_fails(self, email: str, password: str) -> None:
         base_url = os.getenv("BASE_URL", "https://automationexercise.com/")
-        response = self.page.request.post(
+        response = self.request.post(
             base_url + "api/verifyLogin", form={"email": email, "password": password}
         )
         assert response.status == 200
@@ -84,7 +84,7 @@ class ApiPage:
 
     def create_account(self, email: str) -> None:
         base_url = os.getenv("BASE_URL", "https://automationexercise.com/")
-        response = self.page.request.post(
+        response = self.request.post(
             base_url + "api/createAccount",
             form={
                 "name": fake.first_name(),
@@ -122,7 +122,7 @@ class ApiPage:
 
     def _request_delete_account(self, email: str, password: str) -> APIResponse:
         base_url = os.getenv("BASE_URL", "https://automationexercise.com/")
-        return self.page.request.delete(
+        return self.request.delete(
             base_url + "api/deleteAccount",
             form={"email": email, "password": password},
         )
@@ -140,7 +140,7 @@ class ApiPage:
 
     def assert_user_detail_by_email(self, email: str) -> None:
         base_url = os.getenv("BASE_URL", "https://automationexercise.com/")
-        response = self.page.request.get(base_url + "api/getUserDetailByEmail?email=" + email)
+        response = self.request.get(base_url + "api/getUserDetailByEmail?email=" + email)
         assert response.status == 200
         body = response.json()
         assert body["responseCode"] == 200
