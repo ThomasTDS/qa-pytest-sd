@@ -49,4 +49,8 @@ class LoginPage:
 
     def assert_logged_out(self) -> None:
         expect(self.page).to_have_url(re.compile(r"/login$"))
+        # Confirma que a página é mesmo o formulário de login, e não uma página de
+        # erro do site que por acaso também respondeu na URL /login (já visto com
+        # o site retornando 5xx em outras páginas).
+        expect(self.page.locator('[data-qa="login-email"]')).to_be_visible()
         expect(self.page.locator('a:has-text("Logged in as")')).to_have_count(0)

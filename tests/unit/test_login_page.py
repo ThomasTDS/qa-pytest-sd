@@ -75,6 +75,17 @@ def test_login_with_test_user_logs_in_with_env_credentials(monkeypatch: pytest.M
     locators['[data-qa="login-password"]'].fill.assert_called_once_with("secret")
 
 
+def test_assert_logged_out_checks_url_and_real_login_form() -> None:
+    page, locators = make_page_mock()
+
+    with patch("pages.login_page.expect") as expect_mock:
+        LoginPage(page).assert_logged_out()
+
+    expect_mock.assert_any_call(page)
+    expect_mock.assert_any_call(locators['[data-qa="login-email"]'])
+    expect_mock.assert_any_call(locators['a:has-text("Logged in as")'])
+
+
 def test_is_on_login_page_returns_true_when_url_reaches_login() -> None:
     page, _ = make_page_mock()
 
