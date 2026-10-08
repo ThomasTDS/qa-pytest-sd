@@ -4,7 +4,7 @@ pytest-bdd==9.0.0
 pytest-html==4.2.0
 pytest-rerunfailures==16.7
 pytest-xdist==3.8.0
-python-dotenv==1.2.3
+python-dotenv==1.2.4
 faker==40.40.0
 axe-playwright-python==0.1.8
 allure-pytest==2.16.2
