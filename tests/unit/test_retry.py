@@ -1,8 +1,8 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
-from pages.retry import MAX_RETRIES, retry_while_failing
+from pages.retry import MAX_RETRIES, assert_visible, is_visible, retry_while_failing
 
 pytestmark = pytest.mark.unit
 
@@ -36,3 +36,37 @@ def test_retry_while_failing_stops_at_max_retries() -> None:
 
     assert (result, retries) == ("falhou", MAX_RETRIES)
     assert again.call_count == MAX_RETRIES
+
+
+def test_is_visible_checks_the_right_text_and_timeout() -> None:
+    page = MagicMock(name="page")
+
+    with patch("pages.retry.expect") as expect_mock:
+        result = is_visible(page, "ACCOUNT CREATED!", timeout_ms=5_000)
+
+    page.get_by_text.assert_called_once_with("ACCOUNT CREATED!")
+    expect_mock.assert_called_once_with(page.get_by_text.return_value)
+    expect_mock.return_value.to_be_visible.assert_called_once_with(timeout=5_000)
+    assert result is True
+
+
+def test_is_visible_returns_false_when_text_never_appears() -> None:
+    page = MagicMock(name="page")
+
+    with patch("pages.retry.expect") as expect_mock:
+        expect_mock.return_value.to_be_visible.side_effect = AssertionError()
+        result = is_visible(page, "ACCOUNT CREATED!")
+
+    expect_mock.return_value.to_be_visible.assert_called_once_with(timeout=10_000)
+    assert result is False
+
+
+def test_assert_visible_checks_the_right_text() -> None:
+    page = MagicMock(name="page")
+
+    with patch("pages.retry.expect") as expect_mock:
+        assert_visible(page, "ACCOUNT CREATED!")
+
+    page.get_by_text.assert_called_once_with("ACCOUNT CREATED!")
+    expect_mock.assert_called_once_with(page.get_by_text.return_value)
+    expect_mock.return_value.to_be_visible.assert_called_once_with()
