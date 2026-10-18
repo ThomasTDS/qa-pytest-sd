@@ -1,5 +1,7 @@
 # 🧪 QA Pytest + Playwright - Automation Exercise
 
+🇧🇷 Português | [🇺🇸 English](README.en.md)
+
 ![tests](https://github.com/ThomasTDS/qa-pytest-sd/actions/workflows/tests.yml/badge.svg)
 [![codecov](https://codecov.io/gh/ThomasTDS/qa-pytest-sd/branch/main/graph/badge.svg)](https://codecov.io/gh/ThomasTDS/qa-pytest-sd)
 ![license](https://img.shields.io/badge/license-MIT-blue.svg)
